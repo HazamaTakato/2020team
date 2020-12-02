@@ -199,7 +199,7 @@ void GameScene::Update()
 
 	if (input->PushKey(DIK_SPACE))
 	{
-		audio->PlayWave("Alarm01.wav");
+		audio->PlayWave("Resources/Alarm01.wav");
 	}
 
 
