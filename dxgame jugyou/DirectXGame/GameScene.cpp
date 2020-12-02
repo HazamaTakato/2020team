@@ -197,6 +197,11 @@ void GameScene::Update()
 		debugText.Print("SphereTriangleHIT", 50, 300, 1.0f);
 	}
 
+	if (input->PushKey(DIK_SPACE))
+	{
+		audio->PlayWave("Alarm01.wav");
+	}
+
 
 	objSkydome->Update();
 	objGround->Update();
