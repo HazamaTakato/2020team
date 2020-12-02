@@ -71,7 +71,11 @@ private: // メンバ変数
 	/// ゲームシーン用
 	/// </summary>
 	DebugCamera* camera = nullptr;
+	
+	bool changeCamera;
+
 	Sprite* spriteBG = nullptr;
+	Sprite* spriteCur = nullptr;
 	//ParticleManager* particleMan = nullptr;
 
 	Model* modelSkydome = nullptr;

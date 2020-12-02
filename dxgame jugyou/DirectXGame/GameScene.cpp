@@ -55,11 +55,16 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio * audio)
 	}
 	// 背景スプライト生成
 	spriteBG = Sprite::Create(1, { 0.0f,0.0f });
+
 	// パーティクルマネージャ生成
 	//particleMan = ParticleManager::Create(dxCommon->GetDevice(), camera);
 
 	// テクスチャ2番に読み込み
 	Sprite::LoadTexture(2, L"Resources/tex1.png");
+
+	Sprite::LoadTexture(3, L"Resources/white1x1.png");
+	spriteCur = Sprite::Create(3, { WinApp::window_width / 2-50,WinApp::window_height / 2 -50});
+	spriteCur->SetSize({ 100,100 });
 
 	// モデル読み込み
 	modelSkydome = Model::CreateFromOBJ("skydome");
@@ -81,7 +86,7 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio * audio)
 
 	objFighter->SetPosition({ +1,0,0 });
 	objSphere->SetPosition({ 0,1,0 });
-	objSphere2->SetPosition({ -1,1,-1 });
+	objSphere2->SetPosition({ 0,1,0 });
 	objtri->SetPosition({ 0,1,0 });
 	objtri->SetRotation({90,0,-90});
 	objtri->SetScale({ 2,2,2 });
@@ -89,7 +94,7 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio * audio)
 	sphere1.center = XMVectorSet(0, 1, 0, 1);
 	sphere1.radius = 1.0f;
 
-	sphere2.center = XMVectorSet(-1, 1, -1, 1);
+	sphere2.center = XMVectorSet(0, 1, 0, 1);
 	sphere2.radius = 1.0f;
 
 	plane.normal = XMVectorSet(0, 1, 0, 0); // 法線ベクトル
@@ -110,6 +115,8 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio * audio)
 
 	hit2 = false;
 	hit3 = false;
+
+	changeCamera = false;
 }
 
 void GameScene::Update()
@@ -123,6 +130,20 @@ void GameScene::Update()
 	XMFLOAT3 position2 = objSphere2->GetPosition();
 	objSphere->Update();
 	objSphere2->Update();
+
+	if (input->TriggerKey(DIK_X))
+	{
+		changeCamera =! changeCamera;
+	}
+
+	if (changeCamera) {
+		debugText.Print("changeCamera TRUE", 50, 400, 1.0f);
+		camera->SetTarget({ 0,2,2 });
+	}
+	else
+	{
+		camera->SetTarget({ 0, 2, 0 });
+	}
 
 	// 球移動
 	{
@@ -146,17 +167,17 @@ void GameScene::Update()
 
 		objSphere->SetPosition(position); 
 	}
-	XMFLOAT3 curp = objCur->GetPosition();
+	XMFLOAT2 curp = spriteCur->GetPositon();
 	Input::MouseMove mouseMove = input->GetMouseMove();
-	curp.x += mouseMove.lX*0.01f;
-	curp.y += -mouseMove.lY*0.01f;
-	objCur->SetPosition(curp);
+	curp.x += mouseMove.lX*1.0f;
+	curp.y += mouseMove.lY*1.0f;
+	spriteCur->SetPosition({ curp.x,curp.y });
 
 	if (input->PushKey(DIK_B))
 	{
-		curp.x = 0;
-		curp.y = 2;
-		objCur->SetPosition(curp);
+		curp.x = WinApp::window_width / 2 - 50;
+		curp.y = WinApp::window_height / 2 - 50;
+		spriteCur->SetPosition({ curp.x,curp.y });
 	}
 
 	//position.z += 0.001f;
@@ -180,9 +201,11 @@ void GameScene::Update()
 	float distance = position_sub.m128_f32[0];
 
 	if (distance <= sphere1.radius + sphere2.radius) {
+		XMVECTOR moveZ = XMVectorSet(0, 0, 0.01f, 0);
 		debugText.Print("Sphere*2Hit", 50, 100, 1.0f);
-		//position.z += 0.001f;
-		//objSphere->SetPosition(position);
+		position2.z += 0.001f;
+		sphere2.center += moveZ;
+		objSphere2->SetPosition(position2);
 	}
 	else
 	{
@@ -254,6 +277,8 @@ void GameScene::Draw()
 #pragma region 前景スプライト描画
 	// 前景スプライト描画前処理
 	Sprite::PreDraw(cmdList);
+
+	spriteCur->Draw();
 
 	/// <summary>
 	/// ここに前景スプライトの描画処理を追加できる

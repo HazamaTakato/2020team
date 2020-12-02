@@ -90,7 +90,6 @@ public: // メンバ関数
 
 	const int mouseVelY() { return Mouse.lY * vel; }
 
-
 private: // メンバ変数
 	ComPtr<IDirectInput8> dinput;
 	ComPtr<IDirectInputDevice8> devKeyboard;
