@@ -167,10 +167,31 @@ void GameScene::Update()
 
 		objSphere->SetPosition(position); 
 	}
+	bool up, down, left, right = false;
 	XMFLOAT2 curp = spriteCur->GetPositon();
 	Input::MouseMove mouseMove = input->GetMouseMove();
-	curp.x += mouseMove.lX*1.0f;
-	curp.y += mouseMove.lY*1.0f;
+
+	if (!right || !left && !up || !down) {
+		curp.x += mouseMove.lX*1.0f;
+		curp.y += mouseMove.lY*1.0f;
+	}
+	if (curp.x >= WinApp::window_width - 100) {
+		curp.x = WinApp::window_width - 100;
+		right = true;
+	}
+
+	if (curp.x <= 0) {
+		curp.x = 0;
+		left = true;
+	}
+	if (curp.y >= WinApp::window_height - 100) {
+		curp.y = WinApp::window_height - 100;
+		down = true;
+	}
+	if (curp.y <= 0) {
+		curp.y = 0;
+		up = true;
+	}
 	spriteCur->SetPosition({ curp.x,curp.y });
 
 	if (input->PushKey(DIK_B))
