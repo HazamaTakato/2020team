@@ -1,6 +1,6 @@
 ﻿#include "WinApp.h"
 
-const wchar_t WinApp::windowClassName[] = L"個人進捗";
+const wchar_t WinApp::windowClassName[] = L"2020T";
 
 // ウィンドウプロシージャ
 LRESULT WinApp::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
