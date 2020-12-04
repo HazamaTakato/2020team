@@ -14,13 +14,22 @@ GameScene::GameScene()
 GameScene::~GameScene()
 {
 	safe_delete(spriteBG);
+	safe_delete(spriteCur);
 	//safe_delete(particleMan);
 	safe_delete(objSkydome);
 	safe_delete(objGround);
 	safe_delete(objFighter);
+	safe_delete(objCur);
+	safe_delete(objSphere);
+	safe_delete(objSphere2);
 	safe_delete(modelSkydome);
 	safe_delete(modelGround);
 	safe_delete(modelFighter);
+	safe_delete(modelCur);
+	safe_delete(modelSphere);
+	safe_delete(modelSphere2);
+	safe_delete(objtri);
+	safe_delete(tri);
 }
 
 void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio * audio)
@@ -243,7 +252,7 @@ void GameScene::Update()
 
 	if (input->PushKey(DIK_SPACE))
 	{
-		audio->PlayWave("Resources/Alarm01.wav");
+		//audio->PlayWave("Resources/Alarm01.wav");
 	}
 
 
