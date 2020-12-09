@@ -113,9 +113,13 @@ private: // メンバ変数
 	XMFLOAT3 position2 = { 1,1,0 };
 
 	vector<Object3d*> objects;
+	vector<int> shotnumber;
 
 	XMFLOAT3 posZ;
 
 	XMFLOAT3 resetPos;
+
+	bool shot = false;
+	int count = 0;
 };
 

@@ -72,7 +72,7 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio * audio)
 	Sprite::LoadTexture(2, L"Resources/tex1.png");
 
 	Sprite::LoadTexture(3, L"Resources/white1x1.png");
-	spriteCur = Sprite::Create(3, { WinApp::window_width / 2-50,WinApp::window_height / 2 -50});
+	spriteCur = Sprite::Create(3, { WinApp::window_width / 2 - 50,WinApp::window_height / 2 - 50 });
 	spriteCur->SetSize({ 100,100 });
 
 	// モデル読み込み
@@ -90,10 +90,10 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio * audio)
 	objFighter = Object3d::Create(modelFighter);
 	objSphere = Object3d::Create(modelSphere);
 	objSphere2 = Object3d::Create(modelSphere2);
-	for (int i = 0; i < 10; i++) {
-		objects.emplace_back(Object3d::Create(modelSphere));
-		//objects[i] = Object3d::Create(modelSphere);
-	}
+	//for (int i = 0; i < 10; i++) {
+	//	objects.emplace_back(Object3d::Create(modelSphere));
+	//	//objects[i] = Object3d::Create(modelSphere);
+	//}
 	objtri = Object3d::Create(tri);
 	objCur = Object3d::Create(modelCur);
 
@@ -101,11 +101,11 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio * audio)
 	objSphere->SetPosition({ 0,1,0 });
 	objSphere2->SetPosition({ 0,1,0 });
 	objtri->SetPosition({ 0,1,0 });
-	objtri->SetRotation({90,0,-90});
+	objtri->SetRotation({ 90,0,-90 });
 	objtri->SetScale({ 2,2,2 });
-	for (int i = 0; i < objects.size(); i++) {
-		objects[i]->SetPosition(objSphere->GetPosition());
-	}
+	//for (int i = 0; i < objects.size(); i++) {
+	//	objects[i]->SetPosition(objSphere->GetPosition());
+	//}
 
 	sphere1.center = XMVectorSet(0, 1, 0, 1);
 	sphere1.radius = 1.0f;
@@ -127,7 +127,7 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio * audio)
 	camera->SetDistance(3.0f);
 
 	objCur->SetRotation(XMFLOAT3(0, 90, 0));
-	objCur->SetScale(XMFLOAT3(1,0.2,0.2));
+	objCur->SetScale(XMFLOAT3(1, 0.2, 0.2));
 
 	hit2 = false;
 	hit3 = false;
@@ -165,7 +165,7 @@ void GameScene::Update()
 
 	if (input->TriggerKey(DIK_X))
 	{
-		changeCamera =! changeCamera;
+		changeCamera = !changeCamera;
 	}
 
 	if (changeCamera) {
@@ -180,14 +180,14 @@ void GameScene::Update()
 	// 球移動
 	{
 		XMVECTOR moveZ = XMVectorSet(0, 0, 0.01f, 0);
-		if (input->PushKey(DIK_W)) { sphere1.center += moveZ;}
-		else if (input->PushKey(DIK_S)) { sphere1.center -= moveZ;}
+		if (input->PushKey(DIK_W)) { sphere1.center += moveZ; }
+		else if (input->PushKey(DIK_S)) { sphere1.center -= moveZ; }
 		XMVECTOR moveY = XMVectorSet(0, 0.01f, 0, 0);
-		if (input->PushKey(DIK_UP)) {sphere1.center += moveY;}
+		if (input->PushKey(DIK_UP)) { sphere1.center += moveY; }
 		else if (input->PushKey(DIK_DOWN)) { sphere1.center -= moveY; }
 		XMVECTOR moveX = XMVectorSet(0.01f, 0, 0, 0);
-		if (input->PushKey(DIK_D)) { sphere1.center += moveX;}
-		else if (input->PushKey(DIK_A)) { sphere1.center -= moveX;}
+		if (input->PushKey(DIK_D)) { sphere1.center += moveX; }
+		else if (input->PushKey(DIK_A)) { sphere1.center -= moveX; }
 	}
 	{
 		if (input->PushKey(DIK_W)) { position.z += 0.01f; }
@@ -197,7 +197,7 @@ void GameScene::Update()
 		if (input->PushKey(DIK_D)) { position.x += 0.01f; }
 		else if (input->PushKey(DIK_A)) { position.x -= 0.01f; }
 
-		objSphere->SetPosition(position); 
+		objSphere->SetPosition(position);
 	}
 	bool up, down, left, right = false;
 	XMFLOAT2 curp = spriteCur->GetPositon();
@@ -237,19 +237,62 @@ void GameScene::Update()
 	//objSphere->SetPosition(position);
 
 	//弾を撃つ処理
-	{
-		XMFLOAT3 position = objects[0]->GetPosition();
-		position.z += 0.1f;
-		objects[0]->SetPosition(position);
-		if (objects[0]->GetPosition().z > 20) {
-			objects[0]->SetPosition(resetPos);
+	if (shotnumber.size() < objects.size() && input->PushKey(DIK_K)) {
+		count++;
+		if (count < objects.size()) {
+			shotnumber.emplace_back(count - 1);
+		}
+		if (count == objects.size()) {
+			count = 0;
 		}
 	}
+	if (shotnumber.size() != 0)
+	{
+		for (int i = 0; i < shotnumber.size(); i++) {
+			XMFLOAT3 position = objects[shotnumber[i]]->GetPosition();
+			position.z += 0.1f;
+			objects[shotnumber[i]]->SetPosition(position);
+			if (objects[shotnumber[i]]->GetPosition().z > 20) {
+				objects[shotnumber[i]]->SetPosition(resetPos);
+				shotnumber.erase(shotnumber.begin() + i);
+			}
+		}
+	}
+	//if (input->TriggerKey(DIK_K)) {
+	//	objects.emplace_back(Object3d::Create(modelSphere));
+	//	objects[count]->SetPosition(position);
+	//	count++;
+	//	//if (count < objects.size()) {
+	//	shotnumber.emplace_back(count - 1);
+	//	//}
+	//	//if (count == objects.size()) {
+	//	//	count = 0;
+	//	//}
+	//}
+	//if (shotnumber.size() != 0)
+	//{
+	//	for (int i = 0; i < shotnumber.size(); i++) {
+	//		XMFLOAT3 position = objects[shotnumber[i]]->GetPosition();
+	//		position.z += 0.1f;
+	//		objects[shotnumber[i]]->SetPosition(position);
+	//		if (objects[shotnumber[i]]->GetPosition().z > 20) {
+	//			//objects[shotnumber[i]]->SetPosition(resetPos);
+	//			for (auto it = std::begin(objects); it != std::end(objects); ++it) {
+	//				*it = objects.erase(objects.begin() + i);
+
+	//			}
+	//			shotnumber.erase(shotnumber.begin() + i);
+	//		}
+	//	}
+	//}
 
 	//リセットポジションにプレイヤーポジションを更新
 	resetPos = position;
+	//for (int i = 0; i < shotnumber.size(); i++) {
+	//	objects[shotnumber[i]]->SetPosition(resetPos);
+	//}
 
-	if(input->PushKey(DIK_SPACE)){ hit2=true;}
+	if (input->PushKey(DIK_SPACE)) { hit2 = true; }
 	//XMVECTOR inter;
 	//bool hit = Collision::CheckSphere2Plane(sphere1, plane, &inter);
 	//if (hit) {
@@ -277,7 +320,7 @@ void GameScene::Update()
 	{
 		debugText.Print("Sphere*2NotHit", 50, 200, 1.0f);
 	}
-	
+
 
 	XMVECTOR inter2;
 	bool hit3 = Collision::CheckSphere2Triangle(sphere1,
@@ -335,8 +378,8 @@ void GameScene::Draw()
 	objtri->Draw();
 	objCur->Draw();
 	if (hit2) {
-		if(objSphere2 != nullptr)
-		objSphere2->Draw();
+		if (objSphere2 != nullptr)
+			objSphere2->Draw();
 	}
 	for (int i = 0; i < objects.size(); i++) {
 		objects[i]->Draw();
