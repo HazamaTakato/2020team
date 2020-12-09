@@ -81,6 +81,10 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio * audio)
 	objFighter = Object3d::Create(modelFighter);
 	objSphere = Object3d::Create(modelSphere);
 	objSphere2 = Object3d::Create(modelSphere2);
+	for (int i = 0; i < 10; i++) {
+		objects.emplace_back(Object3d::Create(modelSphere));
+		//objects[i] = Object3d::Create(modelSphere);
+	}
 	objtri = Object3d::Create(tri);
 	objCur = Object3d::Create(modelCur);
 
@@ -90,6 +94,9 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio * audio)
 	objtri->SetPosition({ 0,1,0 });
 	objtri->SetRotation({90,0,-90});
 	objtri->SetScale({ 2,2,2 });
+	for (int i = 0; i < objects.size(); i++) {
+		objects[i]->SetPosition(objSphere->GetPosition());
+	}
 
 	sphere1.center = XMVectorSet(0, 1, 0, 1);
 	sphere1.radius = 1.0f;
@@ -127,9 +134,25 @@ void GameScene::Update()
 	camera->Update();
 	//particleMan->Update();
 	XMFLOAT3 position = objSphere->GetPosition();
-	XMFLOAT3 position2 = objSphere2->GetPosition();
+	position2 = objSphere2->GetPosition();
+	//XMFLOAT3 position2 = { 1,0,0 };
 	objSphere->Update();
-	objSphere2->Update();
+
+	if (objSphere2 != nullptr)
+	{
+		objSphere2->Update();
+	}
+
+	//if (input->PushKey(DIK_K)) {
+	//	safe_delete(objSphere2);
+	//	safe_delete(modelSphere2);
+	//}
+	//if (input->PushKey(DIK_L)) {
+	//	modelSphere2 = Model::CreateFromOBJ("sphere");
+	//	objSphere2 = Object3d::Create(modelSphere2);
+	//	objSphere2->SetPosition(position2);
+	//	position2.x += 0.2f;
+	//}
 
 	if (input->TriggerKey(DIK_X))
 	{
@@ -204,6 +227,19 @@ void GameScene::Update()
 	//position.z += 0.001f;
 	//objSphere->SetPosition(position);
 
+	//弾を撃つ処理
+	{
+		XMFLOAT3 position = objects[0]->GetPosition();
+		position.z += 0.1f;
+		objects[0]->SetPosition(position);
+		if (objects[0]->GetPosition().z > 20) {
+			objects[0]->SetPosition(resetPos);
+		}
+	}
+
+	//リセットポジションにプレイヤーポジションを更新
+	resetPos = position;
+
 	if(input->PushKey(DIK_SPACE)){ hit2=true;}
 	//XMVECTOR inter;
 	//bool hit = Collision::CheckSphere2Plane(sphere1, plane, &inter);
@@ -232,7 +268,7 @@ void GameScene::Update()
 	{
 		debugText.Print("Sphere*2NotHit", 50, 200, 1.0f);
 	}
-	//
+	
 
 	XMVECTOR inter2;
 	bool hit3 = Collision::CheckSphere2Triangle(sphere1,
@@ -251,9 +287,12 @@ void GameScene::Update()
 	objGround->Update();
 	objFighter->Update();
 	objSphere->Update();
-	objSphere2->Update();
+	//objSphere2->Update();
 	objtri->Update();
 	objCur->Update();
+	for (int i = 0; i < objects.size(); i++) {
+		objects[i]->Update();
+	}
 }
 
 void GameScene::Draw()
@@ -265,7 +304,7 @@ void GameScene::Draw()
 	// 背景スプライト描画前処理
 	Sprite::PreDraw(cmdList);
 	// 背景スプライト描画
-	spriteBG->Draw();
+	//spriteBG->Draw();
 
 	/// <summary>
 	/// ここに背景スプライトの描画処理を追加できる
@@ -287,7 +326,11 @@ void GameScene::Draw()
 	objtri->Draw();
 	objCur->Draw();
 	if (hit2) {
+		if(objSphere2 != nullptr)
 		objSphere2->Draw();
+	}
+	for (int i = 0; i < objects.size(); i++) {
+		objects[i]->Draw();
 	}
 	Object3d::PostDraw();
 

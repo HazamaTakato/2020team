@@ -11,6 +11,9 @@
 #include "Audio.h"
 #include "DebugCamera.h"
 #include"CollisionPrimitive.h"
+#include<vector>
+
+using namespace std;
 
 /// <summary>
 /// ゲームシーン
@@ -106,5 +109,13 @@ private: // メンバ変数
 	bool hit2;
 
 	bool hit3;
+
+	XMFLOAT3 position2 = { 1,1,0 };
+
+	vector<Object3d*> objects;
+
+	XMFLOAT3 posZ;
+
+	XMFLOAT3 resetPos;
 };
 
