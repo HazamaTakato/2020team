@@ -90,10 +90,10 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio * audio)
 	objFighter = Object3d::Create(modelFighter);
 	objSphere = Object3d::Create(modelSphere);
 	objSphere2 = Object3d::Create(modelSphere2);
-	//for (int i = 0; i < 10; i++) {
-	//	objects.emplace_back(Object3d::Create(modelSphere));
-	//	//objects[i] = Object3d::Create(modelSphere);
-	//}
+	for (int i = 0; i < 10; i++) {
+		objects.emplace_back(Object3d::Create(modelSphere));
+		//objects[i] = Object3d::Create(modelSphere);
+	}
 	objtri = Object3d::Create(tri);
 	objCur = Object3d::Create(modelCur);
 
@@ -103,9 +103,9 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio * audio)
 	objtri->SetPosition({ 0,1,0 });
 	objtri->SetRotation({ 90,0,-90 });
 	objtri->SetScale({ 2,2,2 });
-	//for (int i = 0; i < objects.size(); i++) {
-	//	objects[i]->SetPosition(objSphere->GetPosition());
-	//}
+	for (int i = 0; i < objects.size(); i++) {
+		objects[i]->SetPosition(objSphere->GetPosition());
+	}
 
 	sphere1.center = XMVectorSet(0, 1, 0, 1);
 	sphere1.radius = 1.0f;
@@ -237,7 +237,7 @@ void GameScene::Update()
 	//objSphere->SetPosition(position);
 
 	//弾を撃つ処理
-	if (shotnumber.size() < objects.size() && input->PushKey(DIK_K)) {
+	if (shotnumber.size() < objects.size() - 1 && input->TriggerKey(DIK_K)) {
 		count++;
 		if (count < objects.size()) {
 			shotnumber.emplace_back(count - 1);
@@ -261,9 +261,9 @@ void GameScene::Update()
 	//if (input->TriggerKey(DIK_K)) {
 	//	objects.emplace_back(Object3d::Create(modelSphere));
 	//	objects[count]->SetPosition(position);
+	//	shotnumber.emplace_back(count);
 	//	count++;
 	//	//if (count < objects.size()) {
-	//	shotnumber.emplace_back(count - 1);
 	//	//}
 	//	//if (count == objects.size()) {
 	//	//	count = 0;
@@ -277,11 +277,12 @@ void GameScene::Update()
 	//		objects[shotnumber[i]]->SetPosition(position);
 	//		if (objects[shotnumber[i]]->GetPosition().z > 20) {
 	//			//objects[shotnumber[i]]->SetPosition(resetPos);
-	//			for (auto it = std::begin(objects); it != std::end(objects); ++it) {
-	//				*it = objects.erase(objects.begin() + i);
+	//			//for (auto it = std::begin(objects); it != std::end(objects); ++it) {
 
-	//			}
+	//			//}
+	//			objects.erase(objects.begin() + i);
 	//			shotnumber.erase(shotnumber.begin() + i);
+	//			count--;
 	//		}
 	//	}
 	//}
