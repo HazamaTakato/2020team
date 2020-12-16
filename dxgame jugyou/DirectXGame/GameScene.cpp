@@ -298,35 +298,6 @@ void GameScene::Update()
 		}
 	}
 
-	//if (input->TriggerKey(DIK_K)) {
-	//	objects.emplace_back(Object3d::Create(modelSphere));
-	//	objects[count]->SetPosition(position);
-	//	shotnumber.emplace_back(count);
-	//	count++;
-	//	//if (count < objects.size()) {
-	//	//}
-	//	//if (count == objects.size()) {
-	//	//	count = 0;
-	//	//}
-	//}
-	//if (shotnumber.size() != 0)
-	//{
-	//	for (int i = 0; i < shotnumber.size(); i++) {
-	//		XMFLOAT3 position = objects[shotnumber[i]]->GetPosition();
-	//		position.z += 0.1f;
-	//		objects[shotnumber[i]]->SetPosition(position);
-	//		if (objects[shotnumber[i]]->GetPosition().z > 20) {
-	//			//objects[shotnumber[i]]->SetPosition(resetPos);
-	//			//for (auto it = std::begin(objects); it != std::end(objects); ++it) {
-
-	//			//}
-	//			objects.erase(objects.begin() + i);
-	//			shotnumber.erase(shotnumber.begin() + i);
-	//			count--;
-	//		}
-	//	}
-	//}
-
 	//リセットポジションにプレイヤーポジションを更新
 	resetPos = position;
 	//for (int i = 0; i < shotnumber.size(); i++) {
