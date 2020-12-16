@@ -121,5 +121,9 @@ private: // メンバ変数
 
 	bool shot = false;
 	int count = 0;
+
+	const float curZ = 10;	//照準用の仮想Z軸
+	XMFLOAT3 curPos;
+	XMFLOAT3 targetVec;	//射撃ベクトル
 };
 

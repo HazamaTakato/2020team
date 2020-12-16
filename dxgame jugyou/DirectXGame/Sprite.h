@@ -127,6 +127,8 @@ public: // メンバ関数
 	void SetPosition(XMFLOAT2 position);
 
 	const XMFLOAT2& GetPositon() { return position; }
+
+	void SetColor(XMFLOAT4 color);
 	
 	/// <summary>
 	/// サイズの設定

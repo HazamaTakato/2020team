@@ -78,6 +78,8 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio * audio)
 	Sprite::LoadTexture(3, L"Resources/white1x1.png");
 	spriteCur = Sprite::Create(3, { WinApp::window_width / 2 - 50,WinApp::window_height / 2 - 50 });
 	spriteCur->SetSize({ 100,100 });
+	spriteCur->SetColor({ 1,1,1,0.5f });
+	
 
 	// モデル読み込み
 	modelSkydome = Model::CreateFromOBJ("skydome");
@@ -141,6 +143,12 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio * audio)
 
 void GameScene::Update()
 {
+	//照準のポジションにZ軸を追加
+	curPos = { spriteCur->GetPositon().x,spriteCur->GetPositon().y,curZ };
+	curPos.x = (curPos.x - WinApp::window_width / 2) / (WinApp::window_width / 2);
+	curPos.y = (curPos.y - WinApp::window_height / 2) / (WinApp::window_height / 2);
+	curPos.y = 1 - curPos.y;
+
 	// パーティクル生成
 	//CreateParticles();
 
@@ -253,9 +261,13 @@ void GameScene::Update()
 	if (shotnumber.size() != 0)
 	{
 		for (int i = 0; i < shotnumber.size(); i++) {
-			XMFLOAT3 position = objects[shotnumber[i]]->GetPosition();
-			position.z += 0.1f;
-			objects[shotnumber[i]]->SetPosition(position);
+			XMFLOAT3 bulletPos = objects[shotnumber[i]]->GetPosition();
+			//position.z += 0.1f;
+			targetVec = { curPos.x - position.x ,curPos.y - position.y,curPos.z - position.z};
+			bulletPos.x += targetVec.x * 1.5f;
+			bulletPos.y += targetVec.y * 1.5f;
+			bulletPos.z += targetVec.z / 8;
+			objects[shotnumber[i]]->SetPosition(bulletPos);
 			if (objects[shotnumber[i]]->GetPosition().z > 20) {
 				objects[shotnumber[i]]->SetPosition(resetPos);
 				shotnumber.erase(shotnumber.begin() + i);
@@ -386,8 +398,8 @@ void GameScene::Draw()
 		if (objSphere2 != nullptr)
 			objSphere2->Draw();
 	}
-	for (int i = 0; i < objects.size(); i++) {
-		objects[i]->Draw();
+	for (int i = 0; i < shotnumber.size(); i++) {
+		objects[shotnumber[i]]->Draw();
 	}
 	Object3d::PostDraw();
 

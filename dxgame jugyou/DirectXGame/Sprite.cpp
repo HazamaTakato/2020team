@@ -406,6 +406,13 @@ void Sprite::SetPosition(XMFLOAT2 position)
 	TransferVertices();
 }
 
+void Sprite::SetColor(XMFLOAT4 color)
+{
+	this->color = color;
+
+	TransferVertices();
+}
+
 void Sprite::SetSize(XMFLOAT2 size)
 {
 	this->size = size;
