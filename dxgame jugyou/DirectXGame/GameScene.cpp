@@ -267,6 +267,7 @@ void GameScene::Update()
 				shotnumber.emplace_back(count);
 				objects[shotnumber[count]]->SetPosition(position);
 				targetVec = { curPos.x ,curPos.y  ,curPos.z - position.z };
+				bulletVec[shotnumber[count]] = targetVec;//弾ごとのベクトル
 			}
 			else if(count == objects.size()){
 				count = 0;
@@ -285,10 +286,9 @@ void GameScene::Update()
 	{
 		for (int i = 0; i < shotnumber.size(); i++) {
     		XMFLOAT3 bulletPos = objects[shotnumber[i]]->GetPosition();
-			bulletVec[shotnumber[i]] = targetVec;//弾ごとのベクトル
-			bulletPos.x += sin(bulletVec[shotnumber[i]].x) * 2.0f;
-			bulletPos.y += sin(bulletVec[shotnumber[i]].y) * 1.2f;
-			bulletPos.z += bulletVec[shotnumber[i]].z / 8;
+			bulletPos.x += sin(bulletVec[shotnumber[i]].x) * 1.3f;
+			bulletPos.y += sin(bulletVec[shotnumber[i]].y) * 0.7f;
+			bulletPos.z += bulletVec[shotnumber[i]].z /10;
 			objects[shotnumber[i]]->SetPosition(bulletPos);
 			//範囲外で消滅
 			if (objects[shotnumber[i]]->GetPosition().z > 20) {
