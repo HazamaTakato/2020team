@@ -49,6 +49,13 @@ public: // メンバ関数
 	bool TriggerKey(BYTE keyNumber);
 
 	/// <summary>
+	/// キーを離したか
+	/// </summary>
+	/// <param name="keyNumber">キー番号( DIK_0 等)</param>
+	/// <returns>トリガーか</returns>
+	bool ReleaseKey(BYTE keyNumber);
+
+	/// <summary>
 	/// キーの左ボタン押下をチェック
 	/// </summary>
 	/// <returns>押されているか</returns>

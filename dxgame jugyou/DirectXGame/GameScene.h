@@ -12,6 +12,7 @@
 #include "DebugCamera.h"
 #include"CollisionPrimitive.h"
 #include<vector>
+#include<unordered_map>
 
 using namespace std;
 
@@ -113,14 +114,16 @@ private: // メンバ変数
 	XMFLOAT3 position2 = { 1,1,0 };
 
 	vector<Object3d*> objects;
-	vector<int> shotnumber;
+	vector<int> shotnumber;//撃たれてる弾の数
+	unordered_map<int,XMFLOAT3>bulletVec;
 
 	XMFLOAT3 posZ;
 
 	XMFLOAT3 resetPos;
 
-	bool shot = false;
-	int count = 0;
+	int count = 0;//撃たれてる弾の数
+	float shot = 0;	
+	float shotInterval = 10;//射撃間隔
 
 	const float curZ = 10;	//照準用の仮想Z軸
 	XMFLOAT3 curPos;

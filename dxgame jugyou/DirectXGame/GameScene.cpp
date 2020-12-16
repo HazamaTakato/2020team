@@ -79,7 +79,7 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio * audio)
 	spriteCur = Sprite::Create(3, { WinApp::window_width / 2 - 50,WinApp::window_height / 2 - 50 });
 	spriteCur->SetSize({ 100,100 });
 	spriteCur->SetColor({ 1,1,1,0.5f });
-	
+
 
 	// モデル読み込み
 	modelSkydome = Model::CreateFromOBJ("skydome");
@@ -98,7 +98,6 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio * audio)
 	objSphere2 = Object3d::Create(modelSphere2);
 	for (int i = 0; i < 10; i++) {
 		objects.emplace_back(Object3d::Create(modelSphere));
-		//objects[i] = Object3d::Create(modelSphere);
 	}
 	objtri = Object3d::Create(tri);
 	objCur = Object3d::Create(modelCur);
@@ -145,9 +144,13 @@ void GameScene::Update()
 {
 	//照準のポジションにZ軸を追加
 	curPos = { spriteCur->GetPositon().x,spriteCur->GetPositon().y,curZ };
-	curPos.x = (curPos.x - WinApp::window_width / 2) / (WinApp::window_width / 2);
-	curPos.y = (curPos.y - WinApp::window_height / 2) / (WinApp::window_height / 2);
+	//curPos.x = (curPos.x - WinApp::window_width / 2) / (WinApp::window_width / 2);
+	//curPos.y = (curPos.y - WinApp::window_height / 2) / (WinApp::window_height / 2);
+	curPos.x = curPos.x / WinApp::window_width;
+	curPos.x = curPos.x * 2 - 0.9f;
+	curPos.y = curPos.y / WinApp::window_height;
 	curPos.y = 1 - curPos.y;
+	curPos.y = curPos.y * 2 - 1;
 
 	// パーティクル生成
 	//CreateParticles();
@@ -257,31 +260,44 @@ void GameScene::Update()
 	//objSphere->SetPosition(position);
 
 	//弾を撃つ処理
-	if (shotnumber.size() < objects.size() - 1 && input->TriggerKey(DIK_SPACE)) {
-		count++;
-		if (count < objects.size()) {
-			shotnumber.emplace_back(count - 1);
-		}
-		if (count == objects.size()) {
-			count = 0;
+	if (shot > shotInterval) {
+		if (shotnumber.size() < objects.size() - 1 && input->PushKey(DIK_SPACE)) {
+			shot = 0;
+			if (count < objects.size()) {
+				shotnumber.emplace_back(count);
+				objects[shotnumber[count]]->SetPosition(position);
+				targetVec = { curPos.x ,curPos.y  ,curPos.z - position.z };
+			}
+			else if(count == objects.size()){
+				count = 0;
+			}
+			else {
+				count++;
+			}
 		}
 	}
+	shot++;
+	if (input->ReleaseKey(DIK_SPACE)) {
+		shot = shotInterval;
+	}
+	//弾の更新処理
 	if (shotnumber.size() != 0)
 	{
 		for (int i = 0; i < shotnumber.size(); i++) {
-			XMFLOAT3 bulletPos = objects[shotnumber[i]]->GetPosition();
-			//position.z += 0.1f;
-			targetVec = { curPos.x - position.x ,curPos.y - position.y,curPos.z - position.z};
-			bulletPos.x += targetVec.x * 1.5f;
-			bulletPos.y += targetVec.y * 1.5f;
-			bulletPos.z += targetVec.z / 8;
+    		XMFLOAT3 bulletPos = objects[shotnumber[i]]->GetPosition();
+			bulletVec[shotnumber[i]] = targetVec;//弾ごとのベクトル
+			bulletPos.x += sin(bulletVec[shotnumber[i]].x) * 2.0f;
+			bulletPos.y += sin(bulletVec[shotnumber[i]].y) * 1.2f;
+			bulletPos.z += bulletVec[shotnumber[i]].z / 8;
 			objects[shotnumber[i]]->SetPosition(bulletPos);
+			//範囲外で消滅
 			if (objects[shotnumber[i]]->GetPosition().z > 20) {
 				objects[shotnumber[i]]->SetPosition(resetPos);
 				shotnumber.erase(shotnumber.begin() + i);
 			}
 		}
 	}
+
 	//if (input->TriggerKey(DIK_K)) {
 	//	objects.emplace_back(Object3d::Create(modelSphere));
 	//	objects[count]->SetPosition(position);
@@ -356,7 +372,7 @@ void GameScene::Update()
 
 	if (input->PushKey(DIK_SPACE))
 	{
-		audio->PlayWave("Resources/Alarm01.wav");
+		//audio->PlayWave("Resources/Alarm01.wav");
 	}
 
 
