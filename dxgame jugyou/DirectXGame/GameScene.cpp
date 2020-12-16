@@ -155,6 +155,7 @@ void GameScene::Update()
 	camera->Update();
 	//particleMan->Update();
 	XMFLOAT3 position = objSphere->GetPosition();
+	XMFLOAT3 cameraPos = camera->GetTarget();
 	position2 = objSphere2->GetPosition();
 	//XMFLOAT3 position2 = { 1,0,0 };
 	objSphere->Update();
@@ -202,14 +203,21 @@ void GameScene::Update()
 		else if (input->PushKey(DIK_A)) { sphere1.center -= moveX; }
 	}
 	{
-		if (input->PushKey(DIK_W)) { position.z += 0.01f; }
-		else if (input->PushKey(DIK_S)) { position.z -= 0.01f; }
-		if (input->PushKey(DIK_UP)) { position.y += 0.01f; }
-		else if (input->PushKey(DIK_DOWN)) { position.y -= 0.01f; }
-		if (input->PushKey(DIK_D)) { position.x += 0.01f; }
-		else if (input->PushKey(DIK_A)) { position.x -= 0.01f; }
-
+		//if (input->PushKey(DIK_W)) { position.z += 0.01f; }
+		//else if (input->PushKey(DIK_S)) { position.z -= 0.01f; }
+		if (input->PushKey(DIK_W)) { position.y += 0.01f; cameraPos.y += 0.01f; }
+		else if (input->PushKey(DIK_S)) { position.y -= 0.01f; cameraPos.y -= 0.01f; }
+		if (input->PushKey(DIK_D)) { position.x += 0.01f; cameraPos.x += 0.01f; }
+		else if (input->PushKey(DIK_A)) { position.x -= 0.01f; cameraPos.x -= 0.01f; }
+		if (changeCamera) {
+			debugText.Print("changeCamera TRUE", 50, 400, 1.0f);
+			cameraPos.z = 2;
+		}
+		else {
+			cameraPos.z = 0;
+		}
 		objSphere->SetPosition(position);
+		camera->SetTarget(cameraPos);
 	}
 	bool up, down, left, right = false;
 	XMFLOAT2 curp = spriteCur->GetPositon();
