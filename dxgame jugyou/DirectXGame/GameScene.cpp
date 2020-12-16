@@ -30,7 +30,11 @@ GameScene::~GameScene()
 	safe_delete(modelSphere2);
 	safe_delete(objtri);
 	safe_delete(tri);
+	for (int i = 0; i < objects.size(); i++) {
+		safe_delete(objects[i]);
+	}
 }
+
 
 void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio * audio)
 {
@@ -237,7 +241,7 @@ void GameScene::Update()
 	//objSphere->SetPosition(position);
 
 	//弾を撃つ処理
-	if (shotnumber.size() < objects.size() - 1 && input->TriggerKey(DIK_K)) {
+	if (shotnumber.size() < objects.size() - 1 && input->TriggerKey(DIK_SPACE)) {
 		count++;
 		if (count < objects.size()) {
 			shotnumber.emplace_back(count - 1);
@@ -293,7 +297,7 @@ void GameScene::Update()
 	//	objects[shotnumber[i]]->SetPosition(resetPos);
 	//}
 
-	if (input->PushKey(DIK_SPACE)) { hit2 = true; }
+	//if (input->PushKey(DIK_SPACE)) { hit2 = true; }
 	//XMVECTOR inter;
 	//bool hit = Collision::CheckSphere2Plane(sphere1, plane, &inter);
 	//if (hit) {
@@ -332,7 +336,7 @@ void GameScene::Update()
 
 	if (input->PushKey(DIK_SPACE))
 	{
-		//audio->PlayWave("Resources/Alarm01.wav");
+		audio->PlayWave("Resources/Alarm01.wav");
 	}
 
 
