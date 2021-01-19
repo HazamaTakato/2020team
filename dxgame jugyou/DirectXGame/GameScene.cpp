@@ -337,12 +337,12 @@ void GameScene::Update()
 	}
 
 
-	XMVECTOR inter2;
+	/*XMVECTOR inter2;
 	bool hit3 = Collision::CheckSphere2Triangle(sphere1,
 		triangle, &inter2);
 	if (hit3) {
 		debugText.Print("SphereTriangleHIT", 50, 300, 1.0f);
-	}
+	}*/
 
 	if (input->PushKey(DIK_SPACE))
 	{
@@ -390,8 +390,8 @@ void GameScene::Draw()
 	//objGround->Draw();
 	//objFighter->Draw();
 	objSphere->Draw();
-	objtri->Draw();
-	objCur->Draw();
+	//objtri->Draw();
+	//objCur->Draw();
 	if (hit2) {
 		if (objSphere2 != nullptr)
 			objSphere2->Draw();

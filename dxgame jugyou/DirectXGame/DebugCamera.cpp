@@ -23,36 +23,36 @@ void DebugCamera::Update()
 	// マウスの入力を取得
 	Input::MouseMove mouseMove = input->GetMouseMove();
 
-	// マウスの左ボタンが押されていたらカメラを回転させる
-	if (input->PushMouseLeft())
-	{
-		float dy = mouseMove.lX * scaleY;
-		float dx = mouseMove.lY * scaleX;
+	//// マウスの左ボタンが押されていたらカメラを回転させる
+	//if (input->PushMouseLeft())
+	//{
+	//	float dy = mouseMove.lX * scaleY;
+	//	float dx = mouseMove.lY * scaleX;
 
-		angleX = -dx * XM_PI;
-		angleY = -dy * XM_PI;
-		dirty = true;
-	}
+	//	angleX = -dx * XM_PI;
+	//	angleY = -dy * XM_PI;
+	//	dirty = true;
+	//}
 
-	// マウスの中ボタンが押されていたらカメラを並行移動させる
-	if (input->PushMouseMiddle())
-	{
-		float dx = mouseMove.lX / 100.0f;
-		float dy = mouseMove.lY / 100.0f;
+	//// マウスの中ボタンが押されていたらカメラを並行移動させる
+	//if (input->PushMouseMiddle())
+	//{
+	//	float dx = mouseMove.lX / 100.0f;
+	//	float dy = mouseMove.lY / 100.0f;
 
-		XMVECTOR move = { -dx, +dy, 0, 0 };
-		move = XMVector3Transform(move, matRot);
+	//	XMVECTOR move = { -dx, +dy, 0, 0 };
+	//	move = XMVector3Transform(move, matRot);
 
-		MoveVector(move);
-		dirty = true;
-	}
+	//	MoveVector(move);
+	//	dirty = true;
+	//}
 
-	// ホイール入力で距離を変更
-	if (mouseMove.lZ != 0) {
-		distance -= mouseMove.lZ / 100.0f;
-		distance = max(distance, 1.0f);
-		dirty = true;
-	}
+	//// ホイール入力で距離を変更
+	//if (mouseMove.lZ != 0) {
+	//	distance -= mouseMove.lZ / 100.0f;
+	//	distance = max(distance, 1.0f);
+	//	dirty = true;
+	//}
 
 	if (dirty || viewDirty) {
 		// 追加回転分の回転行列を生成
