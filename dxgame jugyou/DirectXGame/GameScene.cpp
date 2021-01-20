@@ -308,20 +308,23 @@ void GameScene::Update()
 			bulletPos.z += bulletVec[shotnumber[i]].z / 10;
 			objects[shotnumber[i]]->SetPosition(bulletPos);
 
+			if (BulletEnemyHit(bulletPos,enemyPosition)) {
+				debugText.Print("SphereEnemyHit", 50, 100, 1.0f);
+			}
 			///
 			//弾と敵の当たり判定
-			XMVECTOR bulletposition_sub_enemy = XMVectorSet(
-				bulletPos.x - enemyPosition.x,
-				bulletPos.y - enemyPosition.y,
-				bulletPos.z - enemyPosition.z,
-				0);
-			bulletposition_sub_enemy = XMVector3Length(bulletposition_sub_enemy);
-			float enemyDistance = bulletposition_sub_enemy.m128_f32[0];
+			//XMVECTOR bulletposition_sub_enemy = XMVectorSet(
+			//	bulletPos.x - enemyPosition.x,
+			//	bulletPos.y - enemyPosition.y,
+			//	bulletPos.z - enemyPosition.z,
+			//	0);
+			//bulletposition_sub_enemy = XMVector3Length(bulletposition_sub_enemy);
+			//float enemyDistance = bulletposition_sub_enemy.m128_f32[0];
 
-			if (enemyDistance <= enemy.radius + enemy.radius) {
-				debugText.Print("SphereEnemyHit", 50, 100, 1.0f);
-				enemyhit = true;
-			}
+			//if (enemyDistance <= enemy.radius + enemy.radius) {
+			//	debugText.Print("SphereEnemyHit", 50, 100, 1.0f);
+			//	enemyhit = true;
+			//}
 			///
 
 			//範囲外で消滅
@@ -483,3 +486,17 @@ void GameScene::CreateParticles()
 		//particleMan->Add(60, pos, vel, acc, 1.0f, 0.0f);
 	}
 }
+bool GameScene::BulletEnemyHit(XMFLOAT3 bulletPos, XMFLOAT3 enemyPos)
+{
+	//弾と敵の当たり判定
+	XMVECTOR bulletposition_sub_enemy = XMVectorSet(
+		bulletPos.x - enemyPos.x,
+		bulletPos.y - enemyPos.y,
+		bulletPos.z - enemyPos.z,
+		0);
+	bulletposition_sub_enemy = XMVector3Length(bulletposition_sub_enemy);
+	float enemyDistance = bulletposition_sub_enemy.m128_f32[0];
+
+	return enemyDistance <= enemy.radius + enemy.radius;
+}
+

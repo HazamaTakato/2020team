@@ -65,6 +65,9 @@ public: // メンバ関数
 	/// </summary>
 	void CreateParticles();
 
+	//当たり判定弾敵
+	bool BulletEnemyHit(XMFLOAT3 bulletPos, XMFLOAT3 enemyPos);
+
 private: // メンバ変数
 	DirectXCommon* dxCommon = nullptr;
 	Input* input = nullptr;
