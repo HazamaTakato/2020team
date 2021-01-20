@@ -90,6 +90,8 @@ private: // メンバ変数
 	Model* tri = nullptr;
 	Model* modelCur = nullptr;
 
+	Model* modelEnemy = nullptr;
+
 	Object3d* objSkydome = nullptr;
 	Object3d* objGround = nullptr;
 	Object3d* objFighter = nullptr;
@@ -98,8 +100,12 @@ private: // メンバ変数
 	Object3d* objtri = nullptr;
 	Object3d* objCur = nullptr;
 
+	Object3d* objEnemy = nullptr;
+
 	Sphere sphere1;
 	Sphere sphere2;
+
+	Sphere enemy;
 
 	Plane plane;
 	Triangle triangle;
@@ -110,6 +116,8 @@ private: // メンバ変数
 	bool hit2;
 
 	bool hit3;
+
+	bool enemyhit;
 
 	XMFLOAT3 position2 = { 1,1,0 };
 

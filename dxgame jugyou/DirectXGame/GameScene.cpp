@@ -30,6 +30,8 @@ GameScene::~GameScene()
 	safe_delete(modelSphere2);
 	safe_delete(objtri);
 	safe_delete(tri);
+	safe_delete(modelEnemy);
+	safe_delete(objEnemy);
 	for (int i = 0; i < objects.size(); i++) {
 		safe_delete(objects[i]);
 	}
@@ -90,6 +92,8 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio * audio)
 	tri = Model::CreateFromOBJ("triangle");
 	modelCur = Model::CreateFromOBJ("Cur");
 
+	modelEnemy = Model::CreateFromOBJ("sphere");
+
 	// 3Dオブジェクト生成
 	objSkydome = Object3d::Create(modelSkydome);
 	objGround = Object3d::Create(modelGround);
@@ -102,6 +106,8 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio * audio)
 	objtri = Object3d::Create(tri);
 	objCur = Object3d::Create(modelCur);
 
+	objEnemy = Object3d::Create(modelEnemy);
+
 	objFighter->SetPosition({ +1,0,0 });
 	objSphere->SetPosition({ 0,1,0 });
 	objSphere2->SetPosition({ 0,1,0 });
@@ -112,11 +118,16 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio * audio)
 		objects[i]->SetPosition(objSphere->GetPosition());
 	}
 
+	objEnemy->SetPosition({ 0, 1, 15 });
+
 	sphere1.center = XMVectorSet(0, 1, 0, 1);
 	sphere1.radius = 1.0f;
 
 	sphere2.center = XMVectorSet(0, 1, 0, 1);
 	sphere2.radius = 1.0f;
+
+	enemy.center = XMVectorSet(0, 1, 15, 1);
+	enemy.radius = 1.0f;
 
 	plane.normal = XMVectorSet(0, 1, 0, 0); // 法線ベクトル
 	plane.distance = 0.0f; // 原点(0,0,0)からの距離
@@ -136,6 +147,8 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio * audio)
 
 	hit2 = false;
 	hit3 = false;
+
+	enemyhit = false;
 
 	changeCamera = false;
 }
@@ -160,6 +173,7 @@ void GameScene::Update()
 	XMFLOAT3 position = objSphere->GetPosition();
 	XMFLOAT3 cameraPos = camera->GetTarget();
 	position2 = objSphere2->GetPosition();
+	XMFLOAT3 enemyPosition = objEnemy->GetPosition();
 	//XMFLOAT3 position2 = { 1,0,0 };
 	objSphere->Update();
 
@@ -293,6 +307,23 @@ void GameScene::Update()
 			bulletPos.y += sin(bulletVec[shotnumber[i]].y) * 0.7f;
 			bulletPos.z += bulletVec[shotnumber[i]].z / 10;
 			objects[shotnumber[i]]->SetPosition(bulletPos);
+
+			///
+			//弾と敵の当たり判定
+			XMVECTOR bulletposition_sub_enemy = XMVectorSet(
+				bulletPos.x - enemyPosition.x,
+				bulletPos.y - enemyPosition.y,
+				bulletPos.z - enemyPosition.z,
+				0);
+			bulletposition_sub_enemy = XMVector3Length(bulletposition_sub_enemy);
+			float enemyDistance = bulletposition_sub_enemy.m128_f32[0];
+
+			if (enemyDistance <= enemy.radius + enemy.radius) {
+				debugText.Print("SphereEnemyHit", 50, 100, 1.0f);
+				enemyhit = true;
+			}
+			///
+
 			//範囲外で消滅
 			if (objects[shotnumber[i]]->GetPosition().z > 20) {
 				objects[shotnumber[i]]->SetPosition(resetPos);
@@ -357,6 +388,7 @@ void GameScene::Update()
 	//objSphere2->Update();
 	objtri->Update();
 	objCur->Update();
+	objEnemy->Update();
 	for (int i = 0; i < objects.size(); i++) {
 		objects[i]->Update();
 	}
@@ -390,6 +422,9 @@ void GameScene::Draw()
 	//objGround->Draw();
 	//objFighter->Draw();
 	objSphere->Draw();
+	if (!enemyhit) {
+		objEnemy->Draw();
+	}
 	//objtri->Draw();
 	//objCur->Draw();
 	if (hit2) {
