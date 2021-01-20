@@ -126,7 +126,7 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio * audio)
 	sphere2.center = XMVectorSet(0, 1, 0, 1);
 	sphere2.radius = 1.0f;
 
-	enemy.center = XMVectorSet(0, 1, 15, 1);
+	enemy.center = XMVectorSet(0, 1, 0, 1);
 	enemy.radius = 1.0f;
 
 	plane.normal = XMVectorSet(0, 1, 0, 0); // 法線ベクトル
@@ -310,6 +310,11 @@ void GameScene::Update()
 
 			if (BulletEnemyHit(bulletPos,enemyPosition)) {
 				debugText.Print("SphereEnemyHit", 50, 100, 1.0f);
+				float rnX = rand() % 10 - 5;
+				float rnY = rand() % 5;
+				enemyPosition = { rnX,rnY,15 };
+				//enemyPosition = { 0,1,15 };
+				objEnemy->SetPosition(enemyPosition);
 			}
 			///
 			//弾と敵の当たり判定
@@ -425,7 +430,10 @@ void GameScene::Draw()
 	//objGround->Draw();
 	//objFighter->Draw();
 	objSphere->Draw();
-	if (!enemyhit) {
+	//if (!enemyhit) {
+	//	objEnemy->Draw();
+	//}
+	if (objEnemy->GetPosition().z >= -10) {
 		objEnemy->Draw();
 	}
 	//objtri->Draw();
