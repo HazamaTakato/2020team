@@ -164,7 +164,7 @@ void GameScene::Update()
 	//curPos.x = (curPos.x - WinApp::window_width / 2) / (WinApp::window_width / 2);
 	//curPos.y = (curPos.y - WinApp::window_height / 2) / (WinApp::window_height / 2);
 	curPos.x = curPos.x / WinApp::window_width;
-	curPos.x = curPos.x * 2 - 0.9f;
+	curPos.x = curPos.x * 2 - 1;
 	curPos.y = curPos.y / WinApp::window_height;
 	curPos.y = 1 - curPos.y;
 	curPos.y = curPos.y * 2 - 1;
@@ -228,35 +228,42 @@ void GameScene::Update()
 		float curSpeed = 17.0f;
 		//if (input->PushKey(DIK_W)) { position.z += 0.01f; }
 		//else if (input->PushKey(DIK_S)) { position.z -= 0.01f; }
-		if (input->PushKey(DIK_W)) { 
-			position.y += 0.07f; 
+		if (input->PushKey(DIK_W)) {
+			position.y += 0.05f;
 			//cameraPos.y += 0.01f; 
-			curp.y -= curSpeed; 
-			curYback -= curSpeed; }
-		else if (input->PushKey(DIK_S)) { 
-			position.y -= 0.07f; 
+			curp.y -= curSpeed;
+			curYback -= curSpeed;
+			frontY -= curSpeed / 5;
+		}
+		else if (input->PushKey(DIK_S)) {
+			position.y -= 0.05f;
 			//cameraPos.y -= 0.01f;
-			curp.y += curSpeed; curYback += curSpeed; }
+			curp.y += curSpeed;
+			curYback += curSpeed;
+			frontY += curSpeed / 5;
+		}
 		else {
-			if (curYback != 0) {
-				curp.y +=  curYback / 80 * -1;
-				curYback += curYback / 80 * -1;
-			}
+			curp.y -= (curYback - frontY) / 20;
+			curYback -= (curYback - frontY) / 20;
 		}
 
 		if (input->PushKey(DIK_D)) {
-			position.x += 0.07f;
-		//cameraPos.x += 0.01f;
-		curp.x += curSpeed; curXback += curSpeed;}
+			position.x += 0.05f;
+			//cameraPos.x += 0.01f;
+			curp.x += curSpeed;
+			curXback += curSpeed;
+			frontX += curSpeed / 3;
+		}
 		else if (input->PushKey(DIK_A)) {
-			position.x -= 0.07f; 
+			position.x -= 0.05f;
 			//cameraPos.x -= 0.01f;
-			curp.x -= curSpeed; curXback -= curSpeed;}
+			curp.x -= curSpeed;
+			curXback -= curSpeed;
+			frontX -= curSpeed / 3;
+		}
 		else {
-			if (curXback != 0) {
-				curp.x +=   curXback / 80 * -1;
-				curXback += curXback / 80 * -1;
-			}
+			curp.x -= (curXback - frontX)/ 20;
+			curXback -= (curXback - frontX )/ 20;
 		}
 		if (changeCamera) {
 			debugText.Print("changeCamera TRUE", 50, 400, 1.0f);
@@ -311,10 +318,10 @@ void GameScene::Update()
 	if (shot > shotInterval) {
 		if (shotnumber.size() < objects.size() - 1 && input->PushKey(DIK_SPACE)) {
 			shot = 0;
-		//if (count < objects.size()) {
+			//if (count < objects.size()) {
 			shotnumber.push_back(count);
 			objects[shotnumber[shotnumber.size() - 1]]->SetPosition(position);
-			targetVec = { curPos.x  ,curPos.y  ,curPos.z - position.z  };
+			targetVec = { (curPos.x + 0.1f) - (position.x / 30) ,(curPos.y - 0.05f) - (position.y / 30) ,curPos.z - position.z };
 			bulletVec[shotnumber[shotnumber.size() - 1]] = targetVec;//弾ごとのベクトル
 
 		//}
@@ -336,12 +343,12 @@ void GameScene::Update()
 	{
 		for (int i = 0; i < shotnumber.size(); i++) {
 			XMFLOAT3 bulletPos = objects[shotnumber[i]]->GetPosition();
-			bulletPos.x += sin(bulletVec[shotnumber[i]].x) * 1.8f;
-			bulletPos.y += sin(bulletVec[shotnumber[i]].y) * 1.4f;
+			bulletPos.x += sin(bulletVec[shotnumber[i]].x) * 2.5f;
+			bulletPos.y += sin(bulletVec[shotnumber[i]].y) * 1.8f;
 			bulletPos.z += bulletVec[shotnumber[i]].z / 10;
 			objects[shotnumber[i]]->SetPosition(bulletPos);
 
-			if (BulletEnemyHit(bulletPos,enemyPosition)) {
+			if (BulletEnemyHit(bulletPos, enemyPosition)) {
 				debugText.Print("SphereEnemyHit", 50, 100, 1.0f);
 				float rnX = rand() % 10 - 5;
 				float rnY = rand() % 5;

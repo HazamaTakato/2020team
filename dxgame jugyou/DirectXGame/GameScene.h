@@ -142,6 +142,12 @@ private: // メンバ変数
 
 	float curXback = 0;
 	float curYback = 0;
+	float frontX = 0;//正面X
+	float frontY = 0;//正面Y
+
+	bool NotKeyAD = false;
+	bool NotKeyWS = false;
+
 
 	//bool screenInCursol = false;
 };
