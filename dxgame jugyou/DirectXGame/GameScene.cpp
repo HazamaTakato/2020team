@@ -221,12 +221,25 @@ void GameScene::Update()
 	}
 	XMFLOAT2 curp = spriteCur->GetPositon();
 	{
+		float curSpeed = 1.5f;
 		//if (input->PushKey(DIK_W)) { position.z += 0.01f; }
 		//else if (input->PushKey(DIK_S)) { position.z -= 0.01f; }
-		if (input->PushKey(DIK_W)) { position.y += 0.01f; cameraPos.y += 0.01f; curp.y -= 0.5f; }
-		else if (input->PushKey(DIK_S)) { position.y -= 0.01f; cameraPos.y -= 0.01f; curp.y += 0.5f; }
-		if (input->PushKey(DIK_D)) { position.x += 0.01f; cameraPos.x += 0.01f; curp.x += 0.5f; }
-		else if (input->PushKey(DIK_A)) { position.x -= 0.01f; cameraPos.x -= 0.01f; curp.x -= 0.5f; }
+		if (input->PushKey(DIK_W)) { position.y += 0.01f; cameraPos.y += 0.01f; curp.y -= curSpeed; curYback -= curSpeed; }
+		else if (input->PushKey(DIK_S)) { position.y -= 0.01f; cameraPos.y -= 0.01f; curp.y += curSpeed; curYback += curSpeed; }
+		else {
+			if (curYback != 0) {
+				curp.y +=  curYback / 15 * -1;
+				curYback += curYback / 15 * -1;
+			}
+		}
+		if (input->PushKey(DIK_D)) { position.x += 0.01f; cameraPos.x += 0.01f; curp.x += curSpeed; curXback += curSpeed;}
+		else if (input->PushKey(DIK_A)) { position.x -= 0.01f; cameraPos.x -= 0.01f; curp.x -= curSpeed; curXback -= curSpeed;}
+		else {
+			if (curXback != 0) {
+				curp.x +=   curXback / 15 * -1;
+				curXback += curXback / 15 * -1;
+			}
+		}
 		if (changeCamera) {
 			debugText.Print("changeCamera TRUE", 50, 400, 1.0f);
 			cameraPos.z = 2;
@@ -239,6 +252,7 @@ void GameScene::Update()
 	}
 	bool up, down, left, right = false;
 	Input::MouseMove mouseMove = input->GetMouseMove();
+
 
 	/*if (!right || !left && !up || !down) {
 		curp.x += mouseMove.lX*1.0f;
