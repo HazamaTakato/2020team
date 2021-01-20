@@ -136,11 +136,13 @@ private: // メンバ変数
 	float shot = 0;	
 	float shotInterval = 10;//射撃間隔
 
-	const float curZ = 10;	//照準用の仮想Z軸
+	const float curZ = 20;	//照準用の仮想Z軸
 	XMFLOAT3 curPos;
 	XMFLOAT3 targetVec;	//射撃ベクトル
 
 	float curXback = 0;
 	float curYback = 0;
+
+	//bool screenInCursol = false;
 };
 

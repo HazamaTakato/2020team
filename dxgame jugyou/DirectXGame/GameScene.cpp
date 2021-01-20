@@ -109,19 +109,21 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio * audio)
 	objEnemy = Object3d::Create(modelEnemy);
 
 	objFighter->SetPosition({ +1,0,0 });
-	objSphere->SetPosition({ 0,1,0 });
+	objSphere->SetPosition({ 0,1.0f,0 });
+	objSphere->SetScale({ 0.5f,0.5f,0.5f });
 	objSphere2->SetPosition({ 0,1,0 });
 	objtri->SetPosition({ 0,1,0 });
 	objtri->SetRotation({ 90,0,-90 });
 	objtri->SetScale({ 2,2,2 });
 	for (int i = 0; i < objects.size(); i++) {
 		objects[i]->SetPosition(objSphere->GetPosition());
+		objects[i]->SetScale({ 0.5f,0.5f,0.5f });
 	}
 
 	objEnemy->SetPosition({ 0, 1, 15 });
 
 	sphere1.center = XMVectorSet(0, 1, 0, 1);
-	sphere1.radius = 1.0f;
+	sphere1.radius = 0.5f;
 
 	sphere2.center = XMVectorSet(0, 1, 0, 1);
 	sphere2.radius = 1.0f;
@@ -151,6 +153,8 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio * audio)
 	enemyhit = false;
 
 	changeCamera = false;
+
+	//screenInCursol = false;
 }
 
 void GameScene::Update()
@@ -221,23 +225,37 @@ void GameScene::Update()
 	}
 	XMFLOAT2 curp = spriteCur->GetPositon();
 	{
-		float curSpeed = 1.5f;
+		float curSpeed = 17.0f;
 		//if (input->PushKey(DIK_W)) { position.z += 0.01f; }
 		//else if (input->PushKey(DIK_S)) { position.z -= 0.01f; }
-		if (input->PushKey(DIK_W)) { position.y += 0.01f; cameraPos.y += 0.01f; curp.y -= curSpeed; curYback -= curSpeed; }
-		else if (input->PushKey(DIK_S)) { position.y -= 0.01f; cameraPos.y -= 0.01f; curp.y += curSpeed; curYback += curSpeed; }
+		if (input->PushKey(DIK_W)) { 
+			position.y += 0.07f; 
+			//cameraPos.y += 0.01f; 
+			curp.y -= curSpeed; 
+			curYback -= curSpeed; }
+		else if (input->PushKey(DIK_S)) { 
+			position.y -= 0.07f; 
+			//cameraPos.y -= 0.01f;
+			curp.y += curSpeed; curYback += curSpeed; }
 		else {
 			if (curYback != 0) {
-				curp.y +=  curYback / 15 * -1;
-				curYback += curYback / 15 * -1;
+				curp.y +=  curYback / 80 * -1;
+				curYback += curYback / 80 * -1;
 			}
 		}
-		if (input->PushKey(DIK_D)) { position.x += 0.01f; cameraPos.x += 0.01f; curp.x += curSpeed; curXback += curSpeed;}
-		else if (input->PushKey(DIK_A)) { position.x -= 0.01f; cameraPos.x -= 0.01f; curp.x -= curSpeed; curXback -= curSpeed;}
+
+		if (input->PushKey(DIK_D)) {
+			position.x += 0.07f;
+		//cameraPos.x += 0.01f;
+		curp.x += curSpeed; curXback += curSpeed;}
+		else if (input->PushKey(DIK_A)) {
+			position.x -= 0.07f; 
+			//cameraPos.x -= 0.01f;
+			curp.x -= curSpeed; curXback -= curSpeed;}
 		else {
 			if (curXback != 0) {
-				curp.x +=   curXback / 15 * -1;
-				curXback += curXback / 15 * -1;
+				curp.x +=   curXback / 80 * -1;
+				curXback += curXback / 80 * -1;
 			}
 		}
 		if (changeCamera) {
@@ -254,27 +272,28 @@ void GameScene::Update()
 	Input::MouseMove mouseMove = input->GetMouseMove();
 
 
-	/*if (!right || !left && !up || !down) {
-		curp.x += mouseMove.lX*1.0f;
-		curp.y += mouseMove.lY*1.0f;
-	}
-	if (curp.x >= WinApp::window_width - 100) {
-		curp.x = WinApp::window_width - 100;
-		right = true;
-	}
+	//if (!right || !left && !up || !down) {
+	//	//curp.x += mouseMove.lX*1.0f;
+	//	//curp.y += mouseMove.lY*1.0f;
+	//	screenInCursol = true;
+	//}
+	//if (curp.x >= WinApp::window_width - 100) {
+	//	curp.x = WinApp::window_width - 100;
+	//	right = true;
+	//}
 
-	if (curp.x <= 0) {
-		curp.x = 0;
-		left = true;
-	}
-	if (curp.y >= WinApp::window_height - 100) {
-		curp.y = WinApp::window_height - 100;
-		down = true;
-	}
-	if (curp.y <= 0) {
-		curp.y = 0;
-		up = true;
-	}*/
+	//if (curp.x <= 0) {
+	//	curp.x = 0;
+	//	left = true;
+	//}
+	//if (curp.y >= WinApp::window_height - 100) {
+	//	curp.y = WinApp::window_height - 100;
+	//	down = true;
+	//}
+	//if (curp.y <= 0) {
+	//	curp.y = 0;
+	//	up = true;
+	//}
 	spriteCur->SetPosition({ curp.x,curp.y });
 
 	if (input->PushKey(DIK_B))
@@ -295,7 +314,7 @@ void GameScene::Update()
 		//if (count < objects.size()) {
 			shotnumber.push_back(count);
 			objects[shotnumber[shotnumber.size() - 1]]->SetPosition(position);
-			targetVec = { curPos.x ,curPos.y  ,curPos.z - position.z };
+			targetVec = { curPos.x  ,curPos.y  ,curPos.z - position.z  };
 			bulletVec[shotnumber[shotnumber.size() - 1]] = targetVec;//弾ごとのベクトル
 
 		//}
@@ -317,8 +336,8 @@ void GameScene::Update()
 	{
 		for (int i = 0; i < shotnumber.size(); i++) {
 			XMFLOAT3 bulletPos = objects[shotnumber[i]]->GetPosition();
-			bulletPos.x += sin(bulletVec[shotnumber[i]].x) * 1.3f;
-			bulletPos.y += sin(bulletVec[shotnumber[i]].y) * 0.7f;
+			bulletPos.x += sin(bulletVec[shotnumber[i]].x) * 1.8f;
+			bulletPos.y += sin(bulletVec[shotnumber[i]].y) * 1.4f;
 			bulletPos.z += bulletVec[shotnumber[i]].z / 10;
 			objects[shotnumber[i]]->SetPosition(bulletPos);
 
