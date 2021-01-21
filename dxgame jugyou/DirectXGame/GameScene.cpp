@@ -69,7 +69,7 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio * audio)
 		return;
 	}
 	// 背景スプライト生成
-	spriteBG = Sprite::Create(1, { 0.0f,0.0f });
+	spriteBG = Sprite::Create(1, { bgX,bgY });
 
 	// パーティクルマネージャ生成
 	//particleMan = ParticleManager::Create(dxCommon->GetDevice(), camera);
@@ -180,6 +180,12 @@ void GameScene::Update()
 	XMFLOAT3 enemyPosition = objEnemy->GetPosition();
 	//XMFLOAT3 position2 = { 1,0,0 };
 	objSphere->Update();
+
+	XMFLOAT3 domeRot = objSkydome->GetRotation();
+	domeRot.x -= 0.01f;
+	domeRot.y += 0.001f;
+	domeRot.z += 0.001f;
+	objSkydome->SetRotation(domeRot);
 
 	if (objSphere2 != nullptr)
 	{

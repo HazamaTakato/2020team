@@ -145,6 +145,9 @@ private: // メンバ変数
 	float frontX = 0;//正面X
 	float frontY = 0;//正面Y
 
+	float bgX;
+	float bgY;
+
 	bool NotKeyAD = false;
 	bool NotKeyWS = false;
 
