@@ -104,11 +104,13 @@ private: // メンバ変数
 	Object3d* objCur = nullptr;
 
 	Object3d* objEnemy = nullptr;
+	Object3d* objMoveEnemy = nullptr;
 
 	Sphere sphere1;
 	Sphere sphere2;
 
 	Sphere enemy;
+	Sphere moveenemy;
 
 	Plane plane;
 	Triangle triangle;

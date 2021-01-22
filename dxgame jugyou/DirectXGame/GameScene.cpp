@@ -32,6 +32,7 @@ GameScene::~GameScene()
 	safe_delete(tri);
 	safe_delete(modelEnemy);
 	safe_delete(objEnemy);
+	safe_delete(objMoveEnemy);
 	for (int i = 0; i < objects.size(); i++) {
 		safe_delete(objects[i]);
 	}
@@ -107,6 +108,7 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio * audio)
 	objCur = Object3d::Create(modelCur);
 
 	objEnemy = Object3d::Create(modelEnemy);
+	objMoveEnemy = Object3d::Create(modelEnemy);
 
 	objFighter->SetPosition({ +1,0,0 });
 	objSphere->SetPosition({ 0,1.0f,0 });
@@ -122,6 +124,8 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio * audio)
 
 	objEnemy->SetPosition({ 0, 1, 15 });
 
+	objMoveEnemy->SetPosition({ 0,7,15 });
+
 	sphere1.center = XMVectorSet(0, 1, 0, 1);
 	sphere1.radius = 0.5f;
 
@@ -130,6 +134,9 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio * audio)
 
 	enemy.center = XMVectorSet(0, 1, 0, 1);
 	enemy.radius = 1.0f;
+
+	moveenemy.center = XMVectorSet(0, 1, 0, 1);
+	moveenemy.radius = 1.0f;
 
 	plane.normal = XMVectorSet(0, 1, 0, 0); // 法線ベクトル
 	plane.distance = 0.0f; // 原点(0,0,0)からの距離
@@ -178,6 +185,7 @@ void GameScene::Update()
 	XMFLOAT3 cameraPos = camera->GetTarget();
 	position2 = objSphere2->GetPosition();
 	XMFLOAT3 enemyPosition = objEnemy->GetPosition();
+	XMFLOAT3 enemyMovePos = objMoveEnemy->GetPosition();
 	//XMFLOAT3 position2 = { 1,0,0 };
 	objSphere->Update();
 
@@ -186,6 +194,10 @@ void GameScene::Update()
 	domeRot.y += 0.001f;
 	domeRot.z += 0.001f;
 	objSkydome->SetRotation(domeRot);
+
+	enemyMovePos.z -= 0.005f;
+	enemyMovePos.y -= 0.0025f;
+	objMoveEnemy->SetPosition(enemyMovePos);
 
 	if (objSphere2 != nullptr)
 	{
@@ -362,6 +374,13 @@ void GameScene::Update()
 				//enemyPosition = { 0,1,15 };
 				objEnemy->SetPosition(enemyPosition);
 			}
+
+			if (BulletEnemyHit(bulletPos, enemyMovePos)) {
+				debugText.Print("bulletMoveEnemyHit", 50, 50, 1.0f);
+				float rnX = rand() % 10 - 5;
+				enemyMovePos = { rnX,7,15 };
+				objMoveEnemy->SetPosition(enemyMovePos);
+			}
 			///
 			//弾と敵の当たり判定
 			//XMVECTOR bulletposition_sub_enemy = XMVectorSet(
@@ -443,6 +462,7 @@ void GameScene::Update()
 	objtri->Update();
 	objCur->Update();
 	objEnemy->Update();
+	objMoveEnemy->Update();
 	for (int i = 0; i < objects.size(); i++) {
 		objects[i]->Update();
 	}
@@ -481,6 +501,9 @@ void GameScene::Draw()
 	//}
 	if (objEnemy->GetPosition().z >= -10) {
 		objEnemy->Draw();
+	}
+	if (objMoveEnemy->GetPosition().z >= 0) {
+		objMoveEnemy->Draw();
 	}
 	//objtri->Draw();
 	//objCur->Draw();
