@@ -90,7 +90,7 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio * audio)
 	modelSkydome = Model::CreateFromOBJ("skydome");
 	modelGround = Model::CreateFromOBJ("ground");
 	modelFighter = Model::CreateFromOBJ("chr_sword");
-	modelSphere = Model::CreateFromOBJ("sphere");
+	modelSphere = Model::CreateFromOBJ("gripen");
 	modelSphere2 = Model::CreateFromOBJ("sphere");
 	tri = Model::CreateFromOBJ("triangle");
 	modelCur = Model::CreateFromOBJ("Cur");
@@ -104,7 +104,7 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio * audio)
 	objSphere = Object3d::Create(modelSphere);
 	objSphere2 = Object3d::Create(modelSphere2);
 	for (int i = 0; i < 10; i++) {
-		objects.emplace_back(Object3d::Create(modelSphere));
+		objects.emplace_back(Object3d::Create(modelSphere2));
 	}
 	objtri = Object3d::Create(tri);
 	objCur = Object3d::Create(modelCur);
@@ -116,8 +116,8 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio * audio)
 
 	objFighter->SetPosition({ +1,0,0 });
 	objSphere->SetPosition({ 0,1.0f,0 });
-	objSphere->SetScale({ 0.5f,0.5f,0.5f });
-	objSphere2->SetPosition({ 0,1,0 });
+	objSphere->SetScale({ 0.2f,0.2f,0.2f });
+	objSphere->SetRotation({ 0,90,0 });
 	objtri->SetPosition({ 0,1,0 });
 	objtri->SetRotation({ 90,0,-90 });
 	objtri->SetScale({ 2,2,2 });
@@ -193,7 +193,6 @@ void GameScene::Update()
 	//particleMan->Update();
 	XMFLOAT3 position = objSphere->GetPosition();
 	XMFLOAT3 cameraPos = camera->GetTarget();
-	position2 = objSphere2->GetPosition();
 	XMFLOAT3 enemyPosition = objEnemy->GetPosition();
 	XMFLOAT3 enemyMovePos = objMoveEnemy->GetPosition();
 	XMFLOAT3 enemyMoveLeftPos = objMoveLeftEnemy->GetPosition();
@@ -216,11 +215,6 @@ void GameScene::Update()
 
 	enemyMoveRightPos.x += 0.005f;
 	objMoveRightEnemy->SetPosition(enemyMoveRightPos);
-
-	if (objSphere2 != nullptr)
-	{
-		objSphere2->Update();
-	}
 
 	//if (input->PushKey(DIK_K)) {
 	//	safe_delete(objSphere2);
@@ -385,7 +379,7 @@ void GameScene::Update()
 			objects[shotnumber[i]]->SetPosition(bulletPos);
 
 			if (BulletEnemyHit(bulletPos, enemyPosition)) {
-				debugText.Print("SphereEnemyHit", 50, 100, 1.0f);
+				//debugText.Print("SphereEnemyHit", 50, 100, 1.0f);
 				float rnX = rand() % 10 - 5;
 				float rnY = rand() % 5;
 				enemyPosition = { rnX,rnY,15 };
@@ -394,7 +388,7 @@ void GameScene::Update()
 			}
 
 			if (BulletEnemyHit(bulletPos, enemyMovePos)) {
-				debugText.Print("bulletMoveEnemyHit", 50, 50, 1.0f);
+				//debugText.Print("bulletMoveEnemyHit", 50, 50, 1.0f);
 				float rnX = rand() % 10 - 5;
 				enemyMovePos = { rnX,7,15 };
 				objMoveEnemy->SetPosition(enemyMovePos);
@@ -478,18 +472,6 @@ void GameScene::Update()
 	position_sub = XMVector3Length(position_sub);
 	float distance = position_sub.m128_f32[0];
 
-	if (distance <= sphere1.radius + sphere2.radius) {
-		XMVECTOR moveZ = XMVectorSet(0, 0, 0.01f, 0);
-		debugText.Print("Sphere*2Hit", 50, 100, 1.0f);
-		position2.z += 0.001f;
-		sphere2.center += moveZ;
-		objSphere2->SetPosition(position2);
-	}
-	else
-	{
-		debugText.Print("Sphere*2NotHit", 50, 200, 1.0f);
-	}
-
 
 	/*XMVECTOR inter2;
 	bool hit3 = Collision::CheckSphere2Triangle(sphere1,
@@ -508,7 +490,7 @@ void GameScene::Update()
 	objGround->Update();
 	objFighter->Update();
 	objSphere->Update();
-	//objSphere2->Update();
+	objSphere2->Update();
 	objtri->Update();
 	objCur->Update();
 	objEnemy->Update();
