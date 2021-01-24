@@ -33,6 +33,8 @@ GameScene::~GameScene()
 	safe_delete(modelEnemy);
 	safe_delete(objEnemy);
 	safe_delete(objMoveEnemy);
+	safe_delete(objMoveLeftEnemy);
+	safe_delete(objMoveRightEnemy);
 	for (int i = 0; i < objects.size(); i++) {
 		safe_delete(objects[i]);
 	}
@@ -109,6 +111,8 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio * audio)
 
 	objEnemy = Object3d::Create(modelEnemy);
 	objMoveEnemy = Object3d::Create(modelEnemy);
+	objMoveLeftEnemy = Object3d::Create(modelEnemy);
+	objMoveRightEnemy = Object3d::Create(modelEnemy);
 
 	objFighter->SetPosition({ +1,0,0 });
 	objSphere->SetPosition({ 0,1.0f,0 });
@@ -126,6 +130,9 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio * audio)
 
 	objMoveEnemy->SetPosition({ 0,7,15 });
 
+	objMoveLeftEnemy->SetPosition({ 17,-1,15 });
+	objMoveRightEnemy->SetPosition({ -17,1,15 });
+
 	sphere1.center = XMVectorSet(0, 1, 0, 1);
 	sphere1.radius = 0.5f;
 
@@ -137,6 +144,9 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio * audio)
 
 	moveenemy.center = XMVectorSet(0, 1, 0, 1);
 	moveenemy.radius = 1.0f;
+
+	atkmoveenemy.center = XMVectorSet(0, 1, 0, 1);
+	atkmoveenemy.radius = 1.0f;
 
 	plane.normal = XMVectorSet(0, 1, 0, 0); // 法線ベクトル
 	plane.distance = 0.0f; // 原点(0,0,0)からの距離
@@ -186,6 +196,8 @@ void GameScene::Update()
 	position2 = objSphere2->GetPosition();
 	XMFLOAT3 enemyPosition = objEnemy->GetPosition();
 	XMFLOAT3 enemyMovePos = objMoveEnemy->GetPosition();
+	XMFLOAT3 enemyMoveLeftPos = objMoveLeftEnemy->GetPosition();
+	XMFLOAT3 enemyMoveRightPos = objMoveRightEnemy->GetPosition();
 	//XMFLOAT3 position2 = { 1,0,0 };
 	objSphere->Update();
 
@@ -198,6 +210,12 @@ void GameScene::Update()
 	enemyMovePos.z -= 0.005f;
 	enemyMovePos.y -= 0.0025f;
 	objMoveEnemy->SetPosition(enemyMovePos);
+
+	enemyMoveLeftPos.x -= 0.005f;
+	objMoveLeftEnemy->SetPosition(enemyMoveLeftPos);
+
+	enemyMoveRightPos.x += 0.005f;
+	objMoveRightEnemy->SetPosition(enemyMoveRightPos);
 
 	if (objSphere2 != nullptr)
 	{
@@ -382,6 +400,18 @@ void GameScene::Update()
 				objMoveEnemy->SetPosition(enemyMovePos);
 			}
 			///
+			
+			if (BulletEnemyHit(bulletPos, enemyMoveLeftPos)) {
+				float rnY = rand() % 5;
+				enemyMoveLeftPos = { 17,rnY,15 };
+				objMoveLeftEnemy->SetPosition(enemyMoveLeftPos);
+			}
+
+			if (BulletEnemyHit(bulletPos, enemyMoveRightPos)) {
+				float rnY = rand() % 5;
+				enemyMoveRightPos = { -17,rnY,15 };
+				objMoveRightEnemy->SetPosition(enemyMoveRightPos);
+			}
 			//弾と敵の当たり判定
 			//XMVECTOR bulletposition_sub_enemy = XMVectorSet(
 			//	bulletPos.x - enemyPosition.x,
@@ -403,6 +433,26 @@ void GameScene::Update()
 				shotnumber.erase(shotnumber.begin() + i);
 			}
 		}
+	}
+
+	//移動敵の画面外処理
+	if (enemyMovePos.z < 0) {
+		float rnX = rand() % 10 - 5;
+		enemyMovePos = { rnX,7,15 };
+		//enemyPosition = { 0,1,15 };
+		objMoveEnemy->SetPosition(enemyMovePos);
+	}
+
+	if (enemyMoveLeftPos.x < -18) {
+		float rnY = rand() % 5;
+		enemyMoveLeftPos = { 17,rnY,15 };
+		objMoveLeftEnemy->SetPosition(enemyMoveLeftPos);
+	}
+
+	if (enemyMoveRightPos.x > 18) {
+		float rnY = rand() % 5;
+		enemyMoveRightPos = { -17,rnY,15 };
+		objMoveRightEnemy->SetPosition(enemyMoveRightPos);
 	}
 
 	//リセットポジションにプレイヤーポジションを更新
@@ -463,6 +513,8 @@ void GameScene::Update()
 	objCur->Update();
 	objEnemy->Update();
 	objMoveEnemy->Update();
+	objMoveLeftEnemy->Update();
+	objMoveRightEnemy->Update();
 	for (int i = 0; i < objects.size(); i++) {
 		objects[i]->Update();
 	}
@@ -505,6 +557,8 @@ void GameScene::Draw()
 	if (objMoveEnemy->GetPosition().z >= 0) {
 		objMoveEnemy->Draw();
 	}
+	objMoveLeftEnemy->Draw();
+	objMoveRightEnemy->Draw();
 	//objtri->Draw();
 	//objCur->Draw();
 	if (hit2) {

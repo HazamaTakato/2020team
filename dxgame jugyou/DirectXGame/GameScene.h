@@ -105,12 +105,15 @@ private: // メンバ変数
 
 	Object3d* objEnemy = nullptr;
 	Object3d* objMoveEnemy = nullptr;
+	Object3d* objMoveLeftEnemy = nullptr;
+	Object3d* objMoveRightEnemy = nullptr;
 
 	Sphere sphere1;
 	Sphere sphere2;
 
 	Sphere enemy;
 	Sphere moveenemy;
+	Sphere atkmoveenemy;
 
 	Plane plane;
 	Triangle triangle;
