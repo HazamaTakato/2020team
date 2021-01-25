@@ -38,6 +38,9 @@ GameScene::~GameScene()
 	for (int i = 0; i < objects.size(); i++) {
 		safe_delete(objects[i]);
 	}
+	for (int i = 0; i < objMoveEnemyList.size(); i++) {
+		safe_delete(objMoveEnemyList[i]);
+	}
 }
 
 
