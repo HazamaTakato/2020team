@@ -130,6 +130,8 @@ private: // メンバ変数
 	XMFLOAT3 position2 = { 1,1,0 };
 
 	vector<Object3d*> objects;
+	vector<Object3d*> objMoveEnemyList;	//MoveEnemy複数格納用リスト
+	vector<XMFLOAT3> objMoveEnemyPosList;	//各MoveEnemyのポジション格納用リスト
 	vector<int> shotnumber;//撃たれてる弾の数
 	unordered_map<int,XMFLOAT3>bulletVec;
 

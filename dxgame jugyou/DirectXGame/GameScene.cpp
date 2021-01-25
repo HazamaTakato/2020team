@@ -110,7 +110,10 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio * audio)
 	objCur = Object3d::Create(modelCur);
 
 	objEnemy = Object3d::Create(modelEnemy);
-	objMoveEnemy = Object3d::Create(modelEnemy);
+	//objMoveEnemy = Object3d::Create(modelEnemy);
+	for (int i = 0; i < 3; i++) {
+		objMoveEnemyList.emplace_back(Object3d::Create(modelEnemy));	//objMoveEnemyListに複数格納
+	}
 	objMoveLeftEnemy = Object3d::Create(modelEnemy);
 	objMoveRightEnemy = Object3d::Create(modelEnemy);
 
@@ -130,9 +133,14 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio * audio)
 	objEnemy->SetRotation({ 0,-90,0 });
 	objEnemy->SetScale({ 0.7f,0.7f,0.7f });
 
-	objMoveEnemy->SetPosition({ 0,7,15 });
-	objMoveEnemy->SetRotation({ 0,-90,0 });
-	objMoveEnemy->SetScale({ 0.7f,0.7f,0.7f });
+	//objMoveEnemy->SetPosition({ 0,7,15 });
+	//objMoveEnemy->SetRotation({ 0,-90,0 });
+	//objMoveEnemy->SetScale({ 0.7f,0.7f,0.7f });
+	for (int i = 0; i < objMoveEnemyList.size(); i++) {
+		objMoveEnemyList[i]->SetPosition({ 0,1 + (float)i,15 });	//objMoveEnemy一体一体に位置など格納
+		objEnemy->SetRotation({ 0,-90,0 });
+		objEnemy->SetScale({ 0.7f,0.7f,0.7f });
+	}
 
 	objMoveLeftEnemy->SetPosition({ 17,-1,15 });
 	objMoveLeftEnemy->SetScale({ 0.7f,0.7f,0.7f });
@@ -202,7 +210,10 @@ void GameScene::Update()
 	XMFLOAT3 position = objSphere->GetPosition();
 	XMFLOAT3 cameraPos = camera->GetTarget();
 	XMFLOAT3 enemyPosition = objEnemy->GetPosition();
-	XMFLOAT3 enemyMovePos = objMoveEnemy->GetPosition();
+	//XMFLOAT3 enemyMovePos = objMoveEnemy->GetPosition();
+	for (int i = 0; i < objMoveEnemyList.size(); i++) {
+		objMoveEnemyPosList.emplace_back(objMoveEnemyList[i]->GetPosition());	//ポジション格納
+	}
 	XMFLOAT3 enemyMoveLeftPos = objMoveLeftEnemy->GetPosition();
 	XMFLOAT3 enemyMoveRightPos = objMoveRightEnemy->GetPosition();
 	//XMFLOAT3 position2 = { 1,0,0 };
@@ -214,9 +225,14 @@ void GameScene::Update()
 	domeRot.z += 0.001f;
 	objSkydome->SetRotation(domeRot);
 
-	enemyMovePos.z -= 0.005f;
-	enemyMovePos.y -= 0.0025f;
-	objMoveEnemy->SetPosition(enemyMovePos);
+	//enemyMovePos.z -= 0.005f;
+	//enemyMovePos.y -= 0.0025f;
+	//objMoveEnemy->SetPosition(enemyMovePos);
+	for (int i = 0; i < objMoveEnemyList.size(); i++) {	//複数更新処理
+		objMoveEnemyPosList[i].z -= 0.005f;
+		objMoveEnemyPosList[i].y -= 0.0025f;
+		objMoveEnemyList[i]->SetPosition(objMoveEnemyPosList[i]);
+	}
 
 	enemyMoveLeftPos.x -= 0.005f;
 	objMoveLeftEnemy->SetPosition(enemyMoveLeftPos);
@@ -300,8 +316,8 @@ void GameScene::Update()
 			frontX -= curSpeed / 3;
 		}
 		else {
-			curp.x -= (curXback - frontX)/ 20;
-			curXback -= (curXback - frontX )/ 20;
+			curp.x -= (curXback - frontX) / 20;
+			curXback -= (curXback - frontX) / 20;
 		}
 		if (changeCamera) {
 			debugText.Print("changeCamera TRUE", 50, 400, 1.0f);
@@ -395,14 +411,14 @@ void GameScene::Update()
 				objEnemy->SetPosition(enemyPosition);
 			}
 
-			if (BulletEnemyHit(bulletPos, enemyMovePos)) {
-				//debugText.Print("bulletMoveEnemyHit", 50, 50, 1.0f);
-				float rnX = rand() % 10 - 5;
-				enemyMovePos = { rnX,7,15 };
-				objMoveEnemy->SetPosition(enemyMovePos);
-			}
+			//if (BulletEnemyHit(bulletPos, enemyMovePos)) {
+			//	//debugText.Print("bulletMoveEnemyHit", 50, 50, 1.0f);
+			//	float rnX = rand() % 10 - 5;
+			//	enemyMovePos = { rnX,7,15 };
+			//	objMoveEnemy->SetPosition(enemyMovePos);
+			//}
 			///
-			
+
 			if (BulletEnemyHit(bulletPos, enemyMoveLeftPos)) {
 				float rnY = rand() % 5;
 				enemyMoveLeftPos = { 17,rnY,15 };
@@ -437,12 +453,28 @@ void GameScene::Update()
 		}
 	}
 
+	//複数の弾と敵の当たり判定処理
+	if (shotnumber.size() != 0)
+	{
+		for (int i = 0; i < shotnumber.size(); i++) {
+			for (int j = 0; j < objMoveEnemyList.size(); j++)
+				if (BulletEnemyHit(objects[shotnumber[i]]->GetPosition(), objMoveEnemyPosList[j])) {
+					//debugText.Print("bulletMoveEnemyHit", 50, 50, 1.0f);
+					float rnX = rand() % 10 - 5;
+					objMoveEnemyPosList[j] = { rnX,7,15 };
+					objMoveEnemyList[j]->SetPosition(objMoveEnemyPosList[j]);
+				}
+		}
+	}
+
 	//移動敵の画面外処理
-	if (enemyMovePos.z < 0) {
-		float rnX = rand() % 10 - 5;
-		enemyMovePos = { rnX,7,15 };
-		//enemyPosition = { 0,1,15 };
-		objMoveEnemy->SetPosition(enemyMovePos);
+	for (int i = 0; i < objMoveEnemyPosList.size(); i++) {
+		if (objMoveEnemyPosList[i].z < 0) {
+			float rnX = rand() % 10 - 5;
+			objMoveEnemyPosList[i] = { rnX,7,15 };
+			//enemyPosition = { 0,1,15 };
+			objMoveEnemyList[i]->SetPosition(objMoveEnemyPosList[i]);
+		}
 	}
 
 	if (enemyMoveLeftPos.x < -18) {
@@ -502,7 +534,10 @@ void GameScene::Update()
 	objtri->Update();
 	objCur->Update();
 	objEnemy->Update();
-	objMoveEnemy->Update();
+	//objMoveEnemy->Update();
+	for (int i = 0; i < objMoveEnemyList.size(); i++) { //複数更新処理
+		objMoveEnemyList[i]->Update();
+	}
 	objMoveLeftEnemy->Update();
 	objMoveRightEnemy->Update();
 	for (int i = 0; i < objects.size(); i++) {
@@ -544,8 +579,10 @@ void GameScene::Draw()
 	if (objEnemy->GetPosition().z >= -10) {
 		objEnemy->Draw();
 	}
-	if (objMoveEnemy->GetPosition().z >= 0) {
-		objMoveEnemy->Draw();
+	for (int i = 0; i < objMoveEnemyList.size(); i++) {	//複数描画処理
+		if (objMoveEnemyList[i]->GetPosition().z >= 0) {
+			objMoveEnemyList[i]->Draw();
+		}
 	}
 	objMoveLeftEnemy->Draw();
 	objMoveRightEnemy->Draw();
