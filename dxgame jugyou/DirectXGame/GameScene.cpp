@@ -90,12 +90,12 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio * audio)
 	modelSkydome = Model::CreateFromOBJ("skydome");
 	modelGround = Model::CreateFromOBJ("ground");
 	modelFighter = Model::CreateFromOBJ("chr_sword");
-	modelSphere = Model::CreateFromOBJ("gripen");
+	modelSphere = Model::CreateFromOBJ("F15");
 	modelSphere2 = Model::CreateFromOBJ("sphere");
 	tri = Model::CreateFromOBJ("triangle");
 	modelCur = Model::CreateFromOBJ("Cur");
 
-	modelEnemy = Model::CreateFromOBJ("sphere");
+	modelEnemy = Model::CreateFromOBJ("gripen");
 
 	// 3Dオブジェクト生成
 	objSkydome = Object3d::Create(modelSkydome);
@@ -116,8 +116,8 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio * audio)
 
 	objFighter->SetPosition({ +1,0,0 });
 	objSphere->SetPosition({ 0,1.0f,0 });
-	objSphere->SetScale({ 0.2f,0.2f,0.2f });
-	objSphere->SetRotation({ 0,90,0 });
+	objSphere->SetRotation({ 0,0,0 });
+	objSphere->SetScale({ 0.25f,0.25f,0.25f });
 	objtri->SetPosition({ 0,1,0 });
 	objtri->SetRotation({ 90,0,-90 });
 	objtri->SetScale({ 2,2,2 });
@@ -127,11 +127,19 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio * audio)
 	}
 
 	objEnemy->SetPosition({ 0, 1, 15 });
+	objEnemy->SetRotation({ 0,-90,0 });
+	objEnemy->SetScale({ 0.7f,0.7f,0.7f });
 
 	objMoveEnemy->SetPosition({ 0,7,15 });
+	objMoveEnemy->SetRotation({ 0,-90,0 });
+	objMoveEnemy->SetScale({ 0.7f,0.7f,0.7f });
 
 	objMoveLeftEnemy->SetPosition({ 17,-1,15 });
+	objMoveLeftEnemy->SetScale({ 0.7f,0.7f,0.7f });
+
+	objMoveRightEnemy->SetRotation({ 0,180,0 });
 	objMoveRightEnemy->SetPosition({ -17,1,15 });
+	objMoveRightEnemy->SetScale({ 0.7f,0.7f,0.7f });
 
 	sphere1.center = XMVectorSet(0, 1, 0, 1);
 	sphere1.radius = 0.5f;
