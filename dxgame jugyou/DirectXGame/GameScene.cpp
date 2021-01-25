@@ -138,8 +138,8 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio * audio)
 	//objMoveEnemy->SetScale({ 0.7f,0.7f,0.7f });
 	for (int i = 0; i < objMoveEnemyList.size(); i++) {
 		objMoveEnemyList[i]->SetPosition({ 0,1 + (float)i,15 });	//objMoveEnemy一体一体に位置など格納
-		objEnemy->SetRotation({ 0,-90,0 });
-		objEnemy->SetScale({ 0.7f,0.7f,0.7f });
+		objMoveEnemyList[i]->SetRotation({ 0,-90,0 });
+		objMoveEnemyList[i]->SetScale({ 0.7f,0.7f,0.7f });
 	}
 
 	objMoveLeftEnemy->SetPosition({ 17,-1,15 });
