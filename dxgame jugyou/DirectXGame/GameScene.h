@@ -147,6 +147,7 @@ private: // メンバ変数
 	XMFLOAT3 curPos;
 	XMFLOAT3 targetVec;	//射撃ベクトル
 
+	XMFLOAT2 curp;
 	float curXback = 0;
 	float curYback = 0;
 	float frontX = 0;//正面X
@@ -160,5 +161,12 @@ private: // メンバ変数
 
 
 	//bool screenInCursol = false;
+
+	int Scene = 0;	//シーン遷移用関数
+	Sprite* title;
+	Sprite* ending;
+	Sprite* gameover;
+
+	int KillsEnemyCount = 0;	//倒した敵の数格納用
 };
 
