@@ -95,6 +95,8 @@ private: // メンバ変数
 
 	Model* modelEnemy = nullptr;
 
+	Model* modelEnemyBoss = nullptr;
+
 	Object3d* objSkydome = nullptr;
 	Object3d* objGround = nullptr;
 	Object3d* objFighter = nullptr;
@@ -107,6 +109,7 @@ private: // メンバ変数
 	Object3d* objMoveEnemy = nullptr;
 	Object3d* objMoveLeftEnemy = nullptr;
 	Object3d* objMoveRightEnemy = nullptr;
+	Object3d* objEnemyBoss = nullptr;
 
 	Sphere sphere1;
 	Sphere sphere2;
