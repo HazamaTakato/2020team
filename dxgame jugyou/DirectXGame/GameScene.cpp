@@ -35,6 +35,8 @@ GameScene::~GameScene()
 	safe_delete(objMoveEnemy);
 	safe_delete(objMoveLeftEnemy);
 	safe_delete(objMoveRightEnemy);
+	safe_delete(objEnemyBoss);
+	safe_delete(modelEnemyBoss);
 	for (int i = 0; i < objects.size(); i++) {
 		safe_delete(objects[i]);
 	}
@@ -99,6 +101,7 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio * audio)
 	modelCur = Model::CreateFromOBJ("Cur");
 
 	modelEnemy = Model::CreateFromOBJ("gripen");
+	modelEnemyBoss = Model::CreateFromOBJ("13891_Spaceship_Cargo_Transport_v1_L1");
 
 	// 3Dオブジェクト生成
 	objSkydome = Object3d::Create(modelSkydome);
@@ -113,6 +116,7 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio * audio)
 	objCur = Object3d::Create(modelCur);
 
 	objEnemy = Object3d::Create(modelEnemy);
+	objEnemyBoss = Object3d::Create(modelEnemyBoss);
 	//objMoveEnemy = Object3d::Create(modelEnemy);
 	for (int i = 0; i < 3; i++) {
 		objMoveEnemyList.emplace_back(Object3d::Create(modelEnemy));	//objMoveEnemyListに複数格納
@@ -135,6 +139,10 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio * audio)
 	objEnemy->SetPosition({ 0, 1, 15 });
 	objEnemy->SetRotation({ 0,-90,0 });
 	objEnemy->SetScale({ 0.7f,0.7f,0.7f });
+
+	objEnemyBoss->SetPosition({0, -3, 15});
+	objEnemyBoss->SetScale({ 0.025f,0.025f,0.025f });
+	objEnemyBoss->SetRotation({ -90,180,0 });
 
 	//objMoveEnemy->SetPosition({ 0,7,15 });
 	//objMoveEnemy->SetRotation({ 0,-90,0 });
@@ -537,6 +545,7 @@ void GameScene::Update()
 	objtri->Update();
 	objCur->Update();
 	objEnemy->Update();
+	objEnemyBoss->Update();
 	//objMoveEnemy->Update();
 	for (int i = 0; i < objMoveEnemyList.size(); i++) { //複数更新処理
 		objMoveEnemyList[i]->Update();
@@ -589,6 +598,7 @@ void GameScene::Draw()
 	}
 	objMoveLeftEnemy->Draw();
 	objMoveRightEnemy->Draw();
+	objEnemyBoss->Draw();
 	//objtri->Draw();
 	//objCur->Draw();
 	if (hit2) {
