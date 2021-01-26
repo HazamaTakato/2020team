@@ -164,7 +164,7 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio * audio)
 	objEnemy->SetRotation({ 0,-90,0 });
 	objEnemy->SetScale({ 0.7f,0.7f,0.7f });
 
-	objEnemyBoss->SetPosition({0, -3, 15});
+	objEnemyBoss->SetPosition({ 0, -3, 15 });
 	objEnemyBoss->SetScale({ 0.025f,0.025f,0.025f });
 	objEnemyBoss->SetRotation({ -90,180,0 });
 
@@ -229,7 +229,7 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio * audio)
 
 void GameScene::Update()
 {
-	if(Scene == scene::Game){
+	if (Scene == scene::Game) {
 		//照準のポジションにZ軸を追加
 		curPos = { spriteCur->GetPositon().x,spriteCur->GetPositon().y,curZ };
 		//curPos.x = (curPos.x - WinApp::window_width / 2) / (WinApp::window_width / 2);
@@ -576,39 +576,22 @@ void GameScene::Update()
 		}
 		objMoveLeftEnemy->Update();
 		objMoveRightEnemy->Update();
+		objEnemyBoss->Update();
+		//objMoveEnemy->Update();
 		for (int i = 0; i < objects.size(); i++) {
 			objects[i]->Update();
 		}
 
-		if (KillsEnemyCount >= 5) {
+		if (KillsEnemyCount >= 10) {
 			Scene = scene::Ending;
 		}
 	}
-<<<<<<< HEAD
 	if (input->TriggerKey(DIK_SPACE) && Scene == scene::Title)
 	{
 		Scene = scene::Game;
-=======
-
-
-	objSkydome->Update();
-	objGround->Update();
-	objFighter->Update();
-	objSphere->Update();
-	objSphere2->Update();
-	objtri->Update();
-	objCur->Update();
-	objEnemy->Update();
-	objEnemyBoss->Update();
-	//objMoveEnemy->Update();
-	for (int i = 0; i < objMoveEnemyList.size(); i++) { //複数更新処理
-		objMoveEnemyList[i]->Update();
->>>>>>> 40724b31ee46b2cc9c601bef38c89417093b0f0d
-	}
-	if (input->TriggerKey(DIK_SPACE) && Scene == scene::Ending ||
-		input->TriggerKey(DIK_SPACE) && Scene == scene::Gameover)
-	{
-		Scene = scene::Title;
+		for (int i = 0; i < objMoveEnemyList.size(); i++) { //複数更新処理
+			objMoveEnemyList[i]->Update();
+		}
 		//ポジション初期化
 		objSphere->SetPosition({ 0,1.0f,0 });
 		objtri->SetPosition({ 0,1,0 });
@@ -633,8 +616,12 @@ void GameScene::Update()
 		curp.y = WinApp::window_height / 2 - 50;
 		spriteCur->SetPosition({ curp.x,curp.y });
 	}
+	if (input->TriggerKey(DIK_SPACE) && Scene == scene::Ending ||
+		input->TriggerKey(DIK_SPACE) && Scene == scene::Gameover)
+	{
+		Scene = scene::Title;
+	}
 }
-
 void GameScene::Draw()
 {
 	// コマンドリストの取得
