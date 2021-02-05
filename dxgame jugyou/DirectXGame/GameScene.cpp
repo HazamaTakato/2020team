@@ -125,7 +125,7 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio * audio)
 	modelCur = Model::CreateFromOBJ("Cur");
 
 	modelEnemy = Model::CreateFromOBJ("gripen");
-	modelEnemyBoss = Model::CreateFromOBJ("13891_Spaceship_Cargo_Transport_v1_L1");
+	//modelEnemyBoss = Model::CreateFromOBJ("13891_Spaceship_Cargo_Transport_v1_L1");
 
 	// 3Dオブジェクト生成
 	objSkydome = Object3d::Create(modelSkydome);
@@ -159,6 +159,7 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio * audio)
 		objects[i]->SetPosition(objSphere->GetPosition());
 		objects[i]->SetScale({ 0.5f,0.5f,0.5f });
 	}
+
 
 	objEnemy->SetPosition({ 0, 1, 15 });
 	objEnemy->SetRotation({ 0,-90,0 });
@@ -227,8 +228,48 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio * audio)
 	KillsEnemyCount = 0;
 }
 
+void GameScene::Initialize()
+{
+	//ポジション初期化
+	objSphere->SetPosition({ 0,1.0f,0 });
+	objtri->SetPosition({ 0,1,0 });
+	objEnemy->SetPosition({ 0, 1, 15 });
+	objMoveLeftEnemy->SetPosition({ 17,-1,15 });
+	objMoveRightEnemy->SetPosition({ -17,1,15 });
+	for (int i = 0; i < objMoveEnemyList.size(); i++) {
+		objMoveEnemyList[i]->SetPosition({ 0,1 + (float)i,15 });	//objMoveEnemy一体一体に位置など格納
+	}
+	for (int i = 0; i < objects.size(); i++) {
+		objects[i]->SetPosition(objSphere->GetPosition());
+	}
+	//いろいろ初期化
+	shot = 0;
+	canShot = false;
+	KillsEnemyCount = 0;
+	curXback = 0;
+	curYback = 0;
+	frontX = 0;//正面X
+	frontY = 0;//正面Y
+					 //curp = { 0,0 };
+					 //spriteCur->SetPosition({ WinApp::window_width / 2 - 50,WinApp::window_height / 2 - 50 });
+	curp.x = WinApp::window_width / 2 - 50;
+	curp.y = WinApp::window_height / 2 - 50;
+	spriteCur->SetPosition({ curp.x,curp.y });
+}
+
 void GameScene::Update()
 {
+	if (input->TriggerKey(DIK_SPACE) && Scene == scene::Title)
+	{
+		Scene = scene::Game;
+	}
+	if (input->TriggerKey(DIK_SPACE) && Scene == scene::Ending ||
+		input->TriggerKey(DIK_SPACE) && Scene == scene::Gameover)
+	{
+		Initialize();
+		Scene = scene::Title;
+	}
+
 	if (Scene == scene::Game) {
 		//照準のポジションにZ軸を追加
 		curPos = { spriteCur->GetPositon().x,spriteCur->GetPositon().y,curZ };
@@ -322,7 +363,7 @@ void GameScene::Update()
 			//else if (input->PushKey(DIK_S)) { position.z -= 0.01f; }
 			if (input->PushKey(DIK_W)) {
 				position.y += 0.05f;
-				//cameraPos.y += 0.01f; 
+				//cameraPos.y += 0.01f;
 				curp.y -= curSpeed;
 				curYback -= curSpeed;
 				frontY -= curSpeed / 5;
@@ -335,8 +376,10 @@ void GameScene::Update()
 				frontY += curSpeed / 5;
 			}
 			else {
-				curp.y -= (curYback - frontY) / 20;
-				curYback -= (curYback - frontY) / 20;
+				if (curYback != 0) {
+					curp.y -= (curYback - frontY) / 20;
+					curYback -= (curYback - frontY) / 20;
+				}
 			}
 
 			if (input->PushKey(DIK_D)) {
@@ -354,8 +397,10 @@ void GameScene::Update()
 				frontX -= curSpeed / 3;
 			}
 			else {
-				curp.x -= (curXback - frontX) / 20;
-				curXback -= (curXback - frontX) / 20;
+				if (curXback != 0) {
+					curp.x -= (curXback - frontX) / 20;
+					curXback -= (curXback - frontX) / 20;
+				}
 			}
 			if (changeCamera) {
 				debugText.Print("changeCamera TRUE", 50, 400, 1.0f);
@@ -367,10 +412,10 @@ void GameScene::Update()
 			objSphere->SetPosition(position);
 			camera->SetTarget(cameraPos);
 		}
-		bool up, down, left, right = false;
-		Input::MouseMove mouseMove = input->GetMouseMove();
 
-
+		///画面制御処理（現在必要なし）
+		//bool up, down, left, right = false;
+		//Input::MouseMove mouseMove = input->GetMouseMove();
 		//if (!right || !left && !up || !down) {
 		//	//curp.x += mouseMove.lX*1.0f;
 		//	//curp.y += mouseMove.lY*1.0f;
@@ -393,6 +438,7 @@ void GameScene::Update()
 		//	curp.y = 0;
 		//	up = true;
 		//}
+
 		spriteCur->SetPosition({ curp.x,curp.y });
 
 		if (input->PushKey(DIK_B))
@@ -407,9 +453,10 @@ void GameScene::Update()
 
 
 		//弾を撃つ処理
-		if (shot > shotInterval) {
+		if (canShot) {
 			if (shotnumber.size() < objects.size() - 1 && input->PushKey(DIK_SPACE)) {
 				shot = 0;
+				canShot = false;
 				//if (count < objects.size()) {
 				shotnumber.push_back(count);
 				objects[shotnumber[shotnumber.size() - 1]]->SetPosition(position);
@@ -427,8 +474,10 @@ void GameScene::Update()
 		}
 
 		shot++;
-		if (input->ReleaseKey(DIK_SPACE)) {
-			shot = shotInterval;
+		//連打防止用
+		if (shot > shotInterval) {
+			canShot = true;
+			shot = shotInterval + 1;
 		}
 		//弾の更新処理
 		if (shotnumber.size() != 0)
@@ -502,7 +551,9 @@ void GameScene::Update()
 					if (BulletEnemyHit(objects[shotnumber[i]]->GetPosition(), objMoveEnemyPosList[j])) {
 						//debugText.Print("bulletMoveEnemyHit", 50, 50, 1.0f);
 						float rnX = rand() % 10 - 5;
-						objMoveEnemyPosList[j] = { rnX,7,15 };
+						float rnY = rand() % 10 - 3;
+						float rnZ = rand() % 5 + 15;
+						objMoveEnemyPosList[j] = { rnX,rnY,rnZ };
 						objMoveEnemyList[j]->SetPosition(objMoveEnemyPosList[j]);
 						KillsEnemyCount++;
 					}
@@ -511,9 +562,11 @@ void GameScene::Update()
 
 		//移動敵の画面外処理
 		for (int i = 0; i < objMoveEnemyPosList.size(); i++) {
-			if (objMoveEnemyPosList[i].z < 0) {
+			if (objMoveEnemyPosList[i].z < - 8) {
 				float rnX = rand() % 10 - 5;
-				objMoveEnemyPosList[i] = { rnX,7,15 };
+				float rnY = rand() % 16 - 8;
+				float rnZ = rand() % 5 + 15;
+				objMoveEnemyPosList[i] = { rnX,rnY,rnZ };
 				//enemyPosition = { 0,1,15 };
 				objMoveEnemyList[i]->SetPosition(objMoveEnemyPosList[i]);
 			}
@@ -582,44 +635,9 @@ void GameScene::Update()
 			objects[i]->Update();
 		}
 
-		if (KillsEnemyCount >= 10) {
+		if (KillsEnemyCount >= 30) {
 			Scene = scene::Ending;
 		}
-	}
-	if (input->TriggerKey(DIK_SPACE) && Scene == scene::Title)
-	{
-		Scene = scene::Game;
-		for (int i = 0; i < objMoveEnemyList.size(); i++) { //複数更新処理
-			objMoveEnemyList[i]->Update();
-		}
-		//ポジション初期化
-		objSphere->SetPosition({ 0,1.0f,0 });
-		objtri->SetPosition({ 0,1,0 });
-		objEnemy->SetPosition({ 0, 1, 15 });
-		objMoveLeftEnemy->SetPosition({ 17,-1,15 });
-		objMoveRightEnemy->SetPosition({ -17,1,15 });
-		for (int i = 0; i < objMoveEnemyList.size(); i++) {
-			objMoveEnemyList[i]->SetPosition({ 0,1 + (float)i,15 });	//objMoveEnemy一体一体に位置など格納
-		}
-		for (int i = 0; i < objects.size(); i++) {
-			objects[i]->SetPosition(objSphere->GetPosition());
-		}
-		//いろいろ初期化
-		KillsEnemyCount = 0;
-		float curXback = 0;
-		float curYback = 0;
-		float frontX = 0;//正面X
-		float frontY = 0;//正面Y
-		//curp = { 0,0 };
-		//spriteCur->SetPosition({ WinApp::window_width / 2 - 50,WinApp::window_height / 2 - 50 });
-		curp.x = WinApp::window_width / 2 - 50;
-		curp.y = WinApp::window_height / 2 - 50;
-		spriteCur->SetPosition({ curp.x,curp.y });
-	}
-	if (input->TriggerKey(DIK_SPACE) && Scene == scene::Ending ||
-		input->TriggerKey(DIK_SPACE) && Scene == scene::Gameover)
-	{
-		Scene = scene::Title;
 	}
 }
 void GameScene::Draw()
@@ -663,7 +681,7 @@ void GameScene::Draw()
 	}
 	objMoveLeftEnemy->Draw();
 	objMoveRightEnemy->Draw();
-	objEnemyBoss->Draw();
+	//objEnemyBoss->Draw();
 	//objtri->Draw();
 	//objCur->Draw();
 	if (hit2) {

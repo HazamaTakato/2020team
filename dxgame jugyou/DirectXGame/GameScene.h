@@ -50,6 +50,9 @@ public: // メンバ関数
 	/// </summary>
 	void Initialize(DirectXCommon* dxCommon, Input* input, Audio* audio);
 
+	///座標などの初期化
+	void Initialize();
+
 	/// <summary>
 	/// 毎フレーム処理
 	/// </summary>
@@ -144,7 +147,8 @@ private: // メンバ変数
 
 	int count = 0;//撃たれてる弾の数
 	float shot = 0;	
-	float shotInterval = 10;//射撃間隔
+	float shotInterval = 8;//射撃間隔
+	bool canShot = false;	//間隔分時間が経ったか
 
 	const float curZ = 20;	//照準用の仮想Z軸
 	XMFLOAT3 curPos;
